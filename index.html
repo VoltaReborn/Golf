@@ -117,6 +117,10 @@ body[data-cardback="blueflame"] .backCard{background:radial-gradient(120px 90px 
 }
 .splashCard .title,.splashCard .tagline{display:none!important}
 
+
+/* v16: reliable drawer tap + roomier bottom table layout */
+.tableControls{bottom:calc(3px + var(--safe-bottom))}
+@media (min-height:740px){.centerPiles{top:47.5%}.actionBanner{top:calc(50% + 102px)}}
 </style>
 </head>
 <body class="face-light splashing" data-cardback="classic">
@@ -166,7 +170,7 @@ body[data-cardback="blueflame"] .backCard{background:radial-gradient(120px 90px 
           <button class="drawerMenuBtn" id="newGameMenuBtn" type="button">Start New Game <small>fresh course</small></button>
           <button class="drawerMenuBtn" data-page="rulesPage" type="button">Rules <small>how to play</small></button>
         </nav>
-        <div class="drawerVersionBadge"><strong id="versionLabel">v2</strong></div>
+        <div class="drawerVersionBadge"><strong id="versionLabel">v16</strong></div>
       </div>
       <section class="subpage" id="scorePage"><div class="subTop"><button class="backBtn" type="button">‹</button><div class="subTitle">Scorecard</div></div><div id="scoreList"></div></section>
       <section class="subpage" id="logPage"><div class="subTop"><button class="backBtn" type="button">‹</button><div class="subTitle">Log</div></div><div id="logEntries"></div></section>
@@ -256,7 +260,7 @@ body[data-cardback="blueflame"] .backCard{background:radial-gradient(120px 90px 
 <script>
 (() => {
   'use strict';
-  const VERSION = 'v15.0.0';
+  const VERSION = 'v16.0.0';
   const SAVE_KEY = 'golf_pwa_v5_save';
   const PREF_KEY = 'golf_pwa_v5_prefs';
   const RANKS = ['A','2','3','4','5','6','7','8','9','10','J','Q','K'];
@@ -351,7 +355,7 @@ body[data-cardback="blueflame"] .backCard{background:radial-gradient(120px 90px 
   function togglePref(key, el){ prefs[key] = !prefs[key]; setToggle(el, prefs[key]); savePrefs(); }
 
   function init(){
-    els.versionLabel.textContent = 'v15';
+    els.versionLabel.textContent = 'v16';
     loadPrefs(); bindEvents(); updateContinueButton(); render();
   }
   function bindEvents(){
@@ -421,6 +425,16 @@ body[data-cardback="blueflame"] .backCard{background:radial-gradient(120px 90px 
     };
     const onUp = ev => {
       if(!drawerDrag) return;
+      const wasOpen = drawerDrag.startedOpen;
+      const wasTabTap = drawerDrag.startedOnTab && !drawerDrag.moved;
+      if(wasTabTap){
+        els.drawer.classList.remove('dragging');
+        els.drawer.style.transform = '';
+        wasOpen ? closeDrawer() : openDrawer();
+        drawerTapClickUntil = Date.now() + 450;
+        drawerDrag = null;
+        return;
+      }
       const w = els.drawer.getBoundingClientRect().width;
       const m = els.drawer.style.transform.match(/translateX\(([-0-9.]+)px\)/);
       const x = m ? Number(m[1]) : (drawerDrag.startedOpen ? 0 : w);
@@ -619,10 +633,10 @@ body[data-cardback="blueflame"] .backCard{background:radial-gradient(120px 90px 
     els.seatLayer.querySelectorAll('.seat.human [data-slot]').forEach(btn => btn.addEventListener('click', () => selectHumanSlot(Number(btn.dataset.slot))));
   }
   function seatPositions(n){
-    if(n === 2) return [{left:50,top:76},{left:50,top:22}];
-    if(n === 3) return [{left:50,top:77},{left:21,top:38},{left:79,top:38}];
-    if(n === 4) return [{left:50,top:78},{left:18,top:49},{left:50,top:20},{left:82,top:49}];
-    return [{left:50,top:78},{left:17,top:59},{left:20,top:27},{left:80,top:27},{left:83,top:59}];
+    if(n === 2) return [{left:50,top:80},{left:50,top:22}];
+    if(n === 3) return [{left:50,top:81},{left:21,top:38},{left:79,top:38}];
+    if(n === 4) return [{left:50,top:82},{left:18,top:49},{left:50,top:20},{left:82,top:49}];
+    return [{left:50,top:82},{left:17,top:59},{left:20,top:27},{left:80,top:27},{left:83,top:59}];
   }
   function renderHumanGrid(){ renderControls(); }
   function renderControls(){
