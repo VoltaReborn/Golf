@@ -330,6 +330,26 @@ body::before{
   .tableControls{bottom:3px!important;}
 }
 
+
+/* v26: experimental PWA bottom safe-area/reach modes */
+body[data-safe-mode="standard"] .tableControls{bottom:max(4px,calc(var(--safe-bottom) * .12))!important;}
+body[data-safe-mode="paint"] .table{bottom:calc(var(--safe-bottom) * -0.65)!important;}
+body[data-safe-mode="paint"] .table::before{height:max(78px,calc(var(--safe-bottom) + 48px))!important;}
+body[data-safe-mode="deep-board"] .app{height:calc(100dvh + var(--safe-bottom) + 22px)!important;min-height:calc(100dvh + var(--safe-bottom) + 22px)!important;bottom:calc((var(--safe-bottom) + 22px) * -1)!important;}
+body[data-safe-mode="deep-board"] .table{bottom:calc((var(--safe-bottom) + 22px) * -1)!important;}
+body[data-safe-mode="deep-board"] .tableControls{bottom:max(4px,calc(var(--safe-bottom) * .08))!important;}
+body[data-safe-mode="controls-low"] .table{bottom:calc(var(--safe-bottom) * -0.4)!important;}
+body[data-safe-mode="controls-low"] .tableControls{bottom:0!important;}
+body[data-safe-mode="unsafe-controls"] .table{bottom:calc(var(--safe-bottom) * -0.85)!important;}
+body[data-safe-mode="unsafe-controls"] .tableControls{bottom:calc(var(--safe-bottom) * -0.45)!important;}
+body[data-safe-mode="edge-controls"] .table{bottom:calc((var(--safe-bottom) + 12px) * -1)!important;}
+body[data-safe-mode="edge-controls"] .tableControls{bottom:calc((var(--safe-bottom) + 6px) * -1)!important;}
+body[data-safe-mode="overdrive"] .app{height:calc(100dvh + var(--safe-bottom) + 56px)!important;min-height:calc(100dvh + var(--safe-bottom) + 56px)!important;bottom:calc((var(--safe-bottom) + 56px) * -1)!important;}
+body[data-safe-mode="overdrive"] .game{inset:0 0 calc((var(--safe-bottom) + 56px) * -1) 0!important;}
+body[data-safe-mode="overdrive"] .table{bottom:calc((var(--safe-bottom) + 56px) * -1)!important;}
+body[data-safe-mode="overdrive"] .tableControls{bottom:calc((var(--safe-bottom) + 18px) * -1)!important;}
+body[data-safe-mode="overdrive"] .seat.human{transform:translate(-50%,-51%)!important;}
+
 </style>
 </head>
 <body class="face-light splashing" data-cardback="classic">
@@ -426,6 +446,18 @@ body::before{
             </div></div>
             <div class="controlRow"><label for="customFelt">Custom felt</label><input id="customFelt" type="color" value="#0a5a3c" /></div>
           </div>
+          <div class="sectionBox"><h3>PWA bottom test</h3>
+            <div class="controlRow"><label for="bottomSafeSelect">Bottom reach mode</label><select id="bottomSafeSelect">
+              <option value="standard">Standard / safe</option>
+              <option value="paint">Paint-only fill</option>
+              <option value="deep-board">Deep board fill</option>
+              <option value="controls-low">Controls lower</option>
+              <option value="unsafe-controls">Unsafe controls</option>
+              <option value="edge-controls">Edge controls</option>
+              <option value="overdrive">Overdrive test</option>
+            </select></div>
+            <p class="smallHelp">Experimental iPhone/PWA layout modes. Some intentionally place tappable controls in the unsafe bottom area so we can see what the browser will actually allow.</p>
+          </div>
         </div>
       </section>
       <section class="subpage" id="rulesPage"><div class="subTop"><button class="backBtn" type="button">‹</button><div class="subTitle">Rules</div></div>
@@ -469,7 +501,7 @@ body::before{
 <script>
 (() => {
   'use strict';
-  const VERSION = 'v25.0.0';
+  const VERSION = 'v26.0.0';
   const SAVE_KEY = 'golf_pwa_v5_save';
   const PREF_KEY = 'golf_pwa_v5_prefs';
   const RANKS = ['A','2','3','4','5','6','7','8','9','10','J','Q','K'];
@@ -478,9 +510,9 @@ body::before{
   const AI_NAMES = ['Maya','Leo','Riley','Sam','Nora','Theo','Ivy','Owen','Milo','Ava','Finn','Zoe','Eli','Luna','Cole','Harper','Quinn','Rowan','Max','Nina','Caleb','Wren','Miles','Sophie','Ethan','Aria','Felix','Ruby','Logan','Piper','Grace','Mason','Chloe','Silas','Emma','Lucas','Hazel','Ben','Olive','Ezra','Clara','Noah','Tessa','Gabe','Mira'];
   const $ = id => document.getElementById(id);
   const els = {};
-  ['app','game','table','seatLayer','holeChip','modeChip','dealerChip','tieChip','drawPileBtn','discardPileBtn','deckCount','discardCount','actionBanner','tableControls','startHoleBtn','viewResultsBtn','nextFromTableBtn','skipScoreBtn','peekBtn','cancelActionBtn','scorecardBtn','cardBackBlock','cardBackToggle','drawer','drawerTab','drawerHome','drawerSub','closeDrawer','versionLabel','scoreList','logEntries','splash','startBtn','continueBtn','splashRulesBtn','setupModal','setupCloseBtn','setupAiCount','setupCards','setupHoles','setupDifficulty','setupLookRule','setupSwapToggle','setupTieToggle','cancelNewGame','confirmNewGame','drawModal','drawModalTitle','drawModalBody','drawModalClose','discardDrawnBtn','replaceDrawnBtn','peekModal','peekBody','peekCloseBtn','swapBottomBtn','peekDoneBtn','holeModal','holeModalTitle','holeModalBody','backToTableBtn','nextHoleBtn','finishToSplashBtn','toast','newGameMenuBtn','lookRuleSelect','swapKnownToggle','tieToggle','aiPaceSelect','faceSelect','cardBackGallery','cardBackSummary','customCardBack','customFelt'].forEach(id => els[id] = $(id));
+  ['app','game','table','seatLayer','holeChip','modeChip','dealerChip','tieChip','drawPileBtn','discardPileBtn','deckCount','discardCount','actionBanner','tableControls','startHoleBtn','viewResultsBtn','nextFromTableBtn','skipScoreBtn','peekBtn','cancelActionBtn','scorecardBtn','cardBackBlock','cardBackToggle','drawer','drawerTab','drawerHome','drawerSub','closeDrawer','versionLabel','scoreList','logEntries','splash','startBtn','continueBtn','splashRulesBtn','setupModal','setupCloseBtn','setupAiCount','setupCards','setupHoles','setupDifficulty','setupLookRule','setupSwapToggle','setupTieToggle','cancelNewGame','confirmNewGame','drawModal','drawModalTitle','drawModalBody','drawModalClose','discardDrawnBtn','replaceDrawnBtn','peekModal','peekBody','peekCloseBtn','swapBottomBtn','peekDoneBtn','holeModal','holeModalTitle','holeModalBody','backToTableBtn','nextHoleBtn','finishToSplashBtn','toast','newGameMenuBtn','lookRuleSelect','swapKnownToggle','tieToggle','aiPaceSelect','faceSelect','cardBackGallery','cardBackSummary','customCardBack','customFelt','bottomSafeSelect'].forEach(id => els[id] = $(id));
 
-  const prefsDefault = {lookRule:'anytime', allowSwap:true, tiebreaker:true, aiPace:'normal', face:'light', cardBack:'classic', customCardBack:'#1e4e8c', felt:'#0a5a3c', feltDeep:'#084a33'};
+  const prefsDefault = {lookRule:'anytime', allowSwap:true, tiebreaker:true, aiPace:'normal', face:'light', cardBack:'classic', customCardBack:'#1e4e8c', felt:'#0a5a3c', feltDeep:'#084a33', bottomSafeMode:'standard'};
   let prefs = {...prefsDefault};
   let state = emptyState();
   let drawerDrag = null;
@@ -515,6 +547,8 @@ body::before{
     setCardBack(prefs.cardBack || 'classic', false);
     document.documentElement.style.setProperty('--custom-card-back', prefs.customCardBack || '#1e4e8c');
     setFelt(prefs.felt || '#0a5a3c', prefs.feltDeep || makeDarkerColor(prefs.felt || '#0a5a3c'), false);
+    applyBottomSafeMode();
+    if(els.bottomSafeSelect) els.bottomSafeSelect.value = prefs.bottomSafeMode || 'standard';
     els.lookRuleSelect.value = prefs.lookRule;
     els.aiPaceSelect.value = prefs.aiPace;
     els.faceSelect.value = prefs.face;
@@ -535,6 +569,13 @@ body::before{
     document.documentElement.style.setProperty('--felt', safe); document.documentElement.style.setProperty('--felt-deep', safeDeep);
     document.querySelectorAll('[data-felt]').forEach(btn => btn.classList.toggle('active', btn.dataset.felt.toLowerCase() === safe.toLowerCase()));
     if(persist) savePrefs();
+  }
+  function applyBottomSafeMode(){
+    const allowed = new Set(['standard','paint','deep-board','controls-low','unsafe-controls','edge-controls','overdrive']);
+    const mode = allowed.has(prefs.bottomSafeMode) ? prefs.bottomSafeMode : 'standard';
+    prefs.bottomSafeMode = mode;
+    document.body.dataset.safeMode = mode;
+    requestAnimationFrame(() => adjustBottomLayout());
   }
   function makeDarkerColor(hex){
     const s = (hex || '#0a5a3c').replace('#','');
@@ -564,7 +605,7 @@ body::before{
   function togglePref(key, el){ prefs[key] = !prefs[key]; setToggle(el, prefs[key]); savePrefs(); }
 
   function init(){
-    els.versionLabel.textContent = 'v25';
+    els.versionLabel.textContent = 'v26';
     loadPrefs(); bindEvents(); updateContinueButton(); render();
     window.addEventListener('resize', () => requestAnimationFrame(adjustBottomLayout));
     window.visualViewport?.addEventListener('resize', () => requestAnimationFrame(adjustBottomLayout));
@@ -615,6 +656,7 @@ body::before{
     els.cardBackToggle.addEventListener('click', () => toggleCardBackBlock());
     els.customCardBack.addEventListener('input', () => { prefs.customCardBack = els.customCardBack.value; setCardBack('custom-solid', false); applyPrefs(); savePrefs(); render(); });
     els.customFelt.addEventListener('input', () => setFelt(els.customFelt.value, makeDarkerColor(els.customFelt.value)));
+    if(els.bottomSafeSelect) els.bottomSafeSelect.addEventListener('change', () => { prefs.bottomSafeMode = els.bottomSafeSelect.value; applyBottomSafeMode(); savePrefs(); toast('Bottom test: ' + els.bottomSafeSelect.options[els.bottomSafeSelect.selectedIndex].text); });
     document.querySelectorAll('[data-felt]').forEach(btn => btn.addEventListener('click', () => { setFelt(btn.dataset.felt, btn.dataset.feltDeep || makeDarkerColor(btn.dataset.felt)); els.customFelt.value = prefs.felt; }));
   }
   function bindDrawerDrag(){
