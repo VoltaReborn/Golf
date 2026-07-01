@@ -727,7 +727,7 @@ body.side-swap .tableControls{right:auto!important;left:8px!important;}
 .updateStale{color:#fff0a8!important;font-weight:1000!important}
 
 
-/* v45: update menu polish */
+/* v47: simplified app update controls */
 .drawerHome{min-height:100%;display:flex;flex-direction:column;}
 .drawerHome nav{flex:1 1 auto;}
 .drawerFooterTools{margin-top:auto;padding-top:10px;display:flex;align-items:center;gap:8px;border-top:1px solid rgba(255,255,255,.10);}
@@ -748,6 +748,23 @@ body.side-swap .tableControls{right:auto!important;left:8px!important;}
 .dangerGhost{border-color:rgba(255,115,115,.35)!important;background:rgba(255,80,80,.10)!important;color:#fff0f0!important;}
 .updateFresh{color:#9ff7cf!important;font-weight:1000!important}
 .updateStale{color:#fff0a8!important;font-weight:1000!important}
+
+/* v47: make Start hole stand out from the standard gold action buttons */
+#startHoleBtn:not(.hidden){
+  color:#03151c!important;
+  background:linear-gradient(180deg,#8ff4ff 0%,#42d9f0 52%,#13a8c4 100%)!important;
+  border-color:rgba(219,251,255,.82)!important;
+  box-shadow:0 0 0 2px rgba(76,220,255,.24),0 8px 18px rgba(0,0,0,.36),0 0 18px rgba(66,217,240,.34),inset 0 1px 0 rgba(255,255,255,.44)!important;
+  text-shadow:0 1px 0 rgba(255,255,255,.32)!important;
+}
+#startHoleBtn:not(.hidden):active{
+  transform:translateY(1px);
+  filter:brightness(.96);
+}
+#startHoleBtn:not(.hidden):disabled{
+  opacity:.58!important;
+  filter:saturate(.7);
+}
 
 </style>
 </head>
@@ -807,7 +824,7 @@ body.side-swap .tableControls{right:auto!important;left:8px!important;}
         </nav>
         <div class="drawerFooterTools">
           <button class="drawerUpdateBtn" data-page="updatePage" type="button"><span>App Update</span><small>latest version</small></button>
-          <div class="drawerVersionBadge"><strong id="versionLabel">v45</strong></div>
+          <div class="drawerVersionBadge"><strong id="versionLabel">v47</strong></div>
         </div>
       </div>
       <section class="subpage" id="scorePage"><div class="subTop"><button class="backBtn" type="button">‹</button><div class="subTitle">Scorecard</div></div><div id="scoreList"></div></section>
@@ -867,10 +884,9 @@ body.side-swap .tableControls{right:auto!important;left:8px!important;}
       </section>
 
       <section class="subpage updatePage" id="updatePage"><div class="subTop"><button class="backBtn" type="button">‹</button><div class="subTitle">App Update</div></div>
-        <div class="sectionBox updateMainBox"><h3>Current version</h3><p id="updateStatusText">Golf v45 is running.</p>
+        <div class="sectionBox updateMainBox"><h3>Current version</h3><p id="updateStatusText">Golf v47 is running.</p>
           <div class="updateBtnGrid"><button class="primaryBtn" id="checkUpdateBtn" type="button">Check for update</button><button class="primaryBtn hidden" id="forceLatestBtn" type="button">Apply update</button></div>
         </div>
-        <details class="sectionBox updateRepairBox"><summary>Advanced repair</summary><p class="smallHelp">Use this only if the app still seems stuck on an older version. It clears cached app files and reloads Golf. It does not erase your saved game or settings.</p><button class="ghostBtn dangerGhost" id="clearCacheBtn" type="button">Clear cached app files + reload</button></details>
       </section>
       <section class="subpage" id="rulesPage"><div class="subTop"><button class="backBtn" type="button">‹</button><div class="subTitle">Rules</div></div>
         <div class="sectionBox"><h3>Goal</h3><p>Finish 9 or 18 holes with the lowest total score.</p></div>
@@ -914,7 +930,7 @@ body.side-swap .tableControls{right:auto!important;left:8px!important;}
 <script>
 (() => {
   'use strict';
-  const VERSION = 'v45.0.0';
+  const VERSION = 'v47.0.0';
   const SAVE_KEY = 'golf_pwa_v5_save';
   const PREF_KEY = 'golf_pwa_v5_prefs';
   const RANKS = ['A','2','3','4','5','6','7','8','9','10','J','Q','K'];
@@ -1093,8 +1109,8 @@ body.side-swap .tableControls{right:auto!important;left:8px!important;}
   }
 
   function init(){
-    els.versionLabel.textContent = 'v45';
-    setUpdateStatus('Golf v45 is running.');
+    els.versionLabel.textContent = 'v47';
+    setUpdateStatus('Golf v47 is running.');
     loadPrefs(); bindEvents(); updateContinueButton(); render();
     wireServiceWorkerUpdates();
     startAutomaticUpdateChecks();
@@ -1153,10 +1169,6 @@ body.side-swap .tableControls{right:auto!important;left:8px!important;}
     els.customFelt.addEventListener('input', () => setFelt(els.customFelt.value, makeDarkerColor(els.customFelt.value)));
     els.checkUpdateBtn?.addEventListener('click', () => checkForUpdate());
     els.forceLatestBtn?.addEventListener('click', forceLatestVersion);
-    els.clearCacheBtn?.addEventListener('click', () => {
-      const ok = window.confirm('Clear cached app files and reload Golf? Your saved game and settings will not be erased.');
-      if(ok) forceLatestVersion();
-    });
     els.updateToastNow?.addEventListener('click', forceLatestVersion);
     els.updateToastLater?.addEventListener('click', dismissUpdatePrompt);
     document.querySelectorAll('[data-felt]').forEach(btn => btn.addEventListener('click', () => { setFelt(btn.dataset.felt, btn.dataset.feltDeep || makeDarkerColor(btn.dataset.felt)); els.customFelt.value = prefs.felt; }));
