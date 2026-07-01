@@ -971,7 +971,7 @@ body.side-swap .tableControls{right:auto!important;left:8px!important;}
 
 
 
-/* v67: dealer-only edge pill nudge */
+/* v69: dealer-only edge pill nudge */
 .updateToast{
   top:auto!important;
   bottom:calc(12px + var(--safe-bottom))!important;
@@ -996,7 +996,7 @@ body.side-swap .tableControls{right:auto!important;left:8px!important;}
   flex:0 0 auto!important;
   padding-bottom:calc(10px + var(--safe-bottom))!important;
 }
-/* v67: keep edge player cards centered; only nudge/shrink pill when edge player is dealer */
+/* v69: keep edge player cards centered; only nudge/shrink pill when edge player is dealer */
 .seat.edgeRight{transform:translate(-50%,-50%)!important;}
 .seat.edgeLeft{transform:translate(-50%,-50%)!important;}
 .seat.edgeRight:not(.dealer) .seatName,.seat.edgeLeft:not(.dealer) .seatName{transform:none!important;max-width:150px!important;}
@@ -1013,7 +1013,7 @@ body.side-swap .tableControls{right:auto!important;left:8px!important;}
 .drawerInlineUpdate.collapsed + .drawerFooterTools{margin-top:0!important;}
 
 
-/* v67: pin main-drawer version pill to the true bottom of the visible drawer in iOS PWA */
+/* v69: pin main-drawer version pill to the true bottom of the visible drawer in iOS PWA */
 .drawerContent{
   position:relative!important;
   overflow-y:auto!important;
@@ -1063,6 +1063,100 @@ body.side-swap .tableControls{right:auto!important;left:8px!important;}
 }
 @supports (height:100dvh){
   .drawer{height:100dvh!important;}
+}
+
+
+
+/* v69: pin drawer version pill to visible drawer bottom in iOS PWA without using the large safe-area offset */
+.drawer.open .drawerHome:not(.hidden) .drawerFooterTools{
+  position:fixed!important;
+  right:var(--side-gap)!important;
+  bottom:12px!important;
+  width:min(88vw,390px)!important;
+  left:auto!important;
+  margin:0!important;
+  padding:0!important;
+  display:flex!important;
+  align-items:center!important;
+  justify-content:center!important;
+  z-index:8200!important;
+  pointer-events:none!important;
+}
+.drawer.open .drawerHome:not(.hidden) .drawerFooterTools .drawerVersionBadge{
+  pointer-events:auto!important;
+}
+.drawer.open .drawerHome:not(.hidden){
+  padding-bottom:64px!important;
+}
+.drawer.open .drawerHome:not(.hidden) .drawerInlineUpdate{
+  position:fixed!important;
+  right:calc(var(--side-gap) + 10px)!important;
+  bottom:58px!important;
+  width:calc(min(88vw,390px) - 20px)!important;
+  left:auto!important;
+  z-index:8190!important;
+}
+.drawer.open .drawerHome:not(.hidden) .drawerInlineUpdate.collapsed{
+  display:none!important;
+}
+@media (display-mode:standalone){
+  .drawer.open .drawerHome:not(.hidden) .drawerFooterTools{bottom:12px!important;}
+  .drawer.open .drawerHome:not(.hidden) .drawerInlineUpdate{bottom:58px!important;}
+}
+
+
+/* v69: keep version footer pinned inside the drawer, not the whole desktop viewport */
+.drawer.open .drawerHome:not(.hidden) .drawerFooterTools{
+  position:absolute!important;
+  left:0!important;
+  right:0!important;
+  bottom:8px!important;
+  width:auto!important;
+  margin:0!important;
+  padding:0!important;
+  display:flex!important;
+  align-items:center!important;
+  justify-content:center!important;
+  z-index:20!important;
+  pointer-events:auto!important;
+}
+.drawer.open .drawerHome:not(.hidden) .drawerFooterTools .drawerVersionBadge{
+  pointer-events:auto!important;
+}
+.drawer.open .drawerHome:not(.hidden){
+  position:relative!important;
+  height:100%!important;
+  min-height:100%!important;
+  padding-bottom:58px!important;
+  box-sizing:border-box!important;
+}
+.drawer.open .drawerHome:not(.hidden) .drawerInlineUpdate{
+  position:absolute!important;
+  left:10px!important;
+  right:10px!important;
+  bottom:52px!important;
+  width:auto!important;
+  margin:0!important;
+  z-index:19!important;
+}
+.drawer.open .drawerHome:not(.hidden) .drawerInlineUpdate.collapsed{
+  display:none!important;
+}
+.drawer.open .drawerContent{
+  position:relative!important;
+  height:100%!important;
+  min-height:0!important;
+  overflow:hidden!important;
+  padding-bottom:0!important;
+}
+.drawer.open .drawerBody{
+  position:relative!important;
+  height:100%!important;
+  min-height:0!important;
+}
+@media (display-mode:standalone){
+  .drawer.open .drawerHome:not(.hidden) .drawerFooterTools{bottom:8px!important;}
+  .drawer.open .drawerHome:not(.hidden) .drawerInlineUpdate{bottom:52px!important;}
 }
 
 </style>
@@ -1123,12 +1217,12 @@ body.side-swap .tableControls{right:auto!important;left:8px!important;}
           <button class="drawerMenuBtn" data-page="rulesPage" type="button">Rules <small>how to play</small></button>
         </nav>
         <div class="drawerInlineUpdate collapsed" id="drawerInlineUpdate" aria-live="polite">
-          <div class="sectionBox updateMainBox"><h3>App update</h3><p id="updateStatusText">Golf v67 is running.</p>
+          <div class="sectionBox updateMainBox"><h3>App update</h3><p id="updateStatusText">Golf v69 is running.</p>
             <div class="updateBtnGrid"><button class="primaryBtn" id="checkUpdateBtn" type="button">Check for update</button><button class="primaryBtn hidden" id="forceLatestBtn" type="button">Apply update</button></div>
           </div>
         </div>
         <div class="drawerFooterTools">
-          <button class="drawerVersionBadge" id="versionPillBtn" type="button" aria-label="App update and version"><strong id="versionLabel">v67</strong><span class="versionUpdateDot" aria-hidden="true"></span></button>
+          <button class="drawerVersionBadge" id="versionPillBtn" type="button" aria-label="App update and version"><strong id="versionLabel">v69</strong><span class="versionUpdateDot" aria-hidden="true"></span></button>
         </div>
       </div>
       <section class="subpage" id="scorePage"><div class="subTop"><button class="backBtn" type="button">‹</button><div class="subTitle">Scorecard</div></div><div id="scoreList"></div></section>
@@ -1229,7 +1323,7 @@ body.side-swap .tableControls{right:auto!important;left:8px!important;}
 <script>
 (() => {
   'use strict';
-  const VERSION = 'v67.0.0';
+  const VERSION = 'v69.0.0';
   const SAVE_KEY = 'golf_pwa_v5_save';
   const PREF_KEY = 'golf_pwa_v5_prefs';
   const RANKS = ['A','2','3','4','5','6','7','8','9','10','J','Q','K'];
@@ -1414,9 +1508,9 @@ body.side-swap .tableControls{right:auto!important;left:8px!important;}
   }
 
   function init(){
-    els.versionLabel.textContent = 'v67';
+    els.versionLabel.textContent = 'v69';
     setUpdateAvailable('');
-    setUpdateStatus('Golf v67 is running.');
+    setUpdateStatus('Golf v69 is running.');
     loadPrefs(); bindEvents(); updateContinueButton(); render();
     wireServiceWorkerUpdates();
     startAutomaticUpdateChecks();
