@@ -1,4 +1,4 @@
-const CACHE_NAME = 'golf-pwa-v37';
+const CACHE_NAME = 'golf-pwa-v38';
 const APP_SHELL = [
   './',
   './index.html',

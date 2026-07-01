@@ -646,6 +646,45 @@ body[data-cardback="custom-image"] .backCard::after{
 .cardBackImageRow input[type="file"]{max-width:58%;font-size:.62rem;}
 .cardBackImageHint{font-size:.66rem;color:var(--muted);line-height:1.2;margin:3px 0 0;text-align:right;max-width:58%;}
 
+
+
+/* v38: larger human cards, side swap option, and lower drawer chevron */
+.drawerTab{top:calc(70dvh - 31px)!important;}
+/* Keep your cards large enough to play comfortably again. */
+.seat.human{--seat-card-w:clamp(50px,14vw,64px)!important;}
+.seat.human.six{--seat-card-w:clamp(40px,11.8vw,52px)!important;}
+/* Nudge opponent cards up without shrinking the draw/discard pile. */
+.seat:not(.human){--seat-card-w:clamp(40px,11.1vw,54px)!important;}
+.seat.six:not(.human){--seat-card-w:clamp(34px,9.6vw,47px)!important;}
+.seat:not(.human) .seatGrid{gap:5px!important;padding:6px!important;}
+@media (min-height:790px){
+  .seat.human{--seat-card-w:clamp(52px,14.6vw,68px)!important;}
+  .seat.human.six{--seat-card-w:clamp(42px,12.2vw,54px)!important;}
+  .seat:not(.human){--seat-card-w:clamp(42px,11.7vw,56px)!important;}
+  .seat.six:not(.human){--seat-card-w:clamp(36px,10.2vw,49px)!important;}
+}
+@media (max-height:740px){
+  .drawerTab{top:calc(68dvh - 31px)!important;}
+  .seat.human{--seat-card-w:clamp(42px,12.2vw,54px)!important;}
+  .seat.human.six{--seat-card-w:clamp(34px,10vw,44px)!important;}
+  .seat:not(.human){--seat-card-w:clamp(34px,9.5vw,45px)!important;}
+  .seat.six:not(.human){--seat-card-w:clamp(29px,8.5vw,39px)!important;}
+}
+@media (max-height:650px){
+  .seat.human{--seat-card-w:clamp(37px,11vw,48px)!important;}
+  .seat.human.six{--seat-card-w:clamp(30px,9vw,38px)!important;}
+  .seat:not(.human){--seat-card-w:clamp(30px,8.5vw,39px)!important;}
+  .seat.six:not(.human){--seat-card-w:clamp(26px,7.6vw,34px)!important;}
+}
+/* Swappable left/right side pods. */
+body.side-swap .sideUtilityPanel{left:auto!important;right:8px!important;}
+body.side-swap .sideUtilityContent{left:auto!important;right:0!important;}
+body.side-swap .tableControls{right:auto!important;left:8px!important;}
+@media (max-height:740px){
+  body.side-swap .sideUtilityPanel{right:6px!important;}
+  body.side-swap .tableControls{left:6px!important;}
+}
+
 </style>
 </head>
 <body class="face-light splashing" data-cardback="classic">
@@ -702,7 +741,7 @@ body[data-cardback="custom-image"] .backCard::after{
           <button class="drawerMenuBtn" id="newGameMenuBtn" type="button">Start New Game <small>fresh course</small></button>
           <button class="drawerMenuBtn" data-page="rulesPage" type="button">Rules <small>how to play</small></button>
         </nav>
-        <div class="drawerVersionBadge"><strong id="versionLabel">v31</strong></div>
+        <div class="drawerVersionBadge"><strong id="versionLabel">v38</strong></div>
       </div>
       <section class="subpage" id="scorePage"><div class="subTop"><button class="backBtn" type="button">‹</button><div class="subTitle">Scorecard</div></div><div id="scoreList"></div></section>
       <section class="subpage" id="logPage"><div class="subTop"><button class="backBtn" type="button">‹</button><div class="subTitle">Log</div></div><div id="logEntries"></div></section>
@@ -739,6 +778,10 @@ body[data-cardback="custom-image"] .backCard::after{
             </div></div>
             <div class="controlRow cardBackCustomRow"><label for="customCardBack">Custom back</label><input id="customCardBack" type="color" value="#1e4e8c" /></div>
             <div class="controlRow cardBackImageRow"><label for="customCardImage">Photo back</label><input id="customCardImage" type="file" accept="image/*" /></div>
+          </div>
+          <div class="sectionBox"><h3>Table controls</h3>
+            <div class="controlRow"><label for="sideLayoutSelect">Side layout</label><select id="sideLayoutSelect"><option value="default">Scores left, controls right</option><option value="swapped">Controls left, scores right</option></select></div>
+            <p class="smallHelp">Swap these if one side is easier to reach or blocks your view less.</p>
           </div>
           <div class="sectionBox"><h3>Table felt</h3>
             <div class="controlRow"><span class="controlLabel">Preset</span><div class="feltPresetGrid">
@@ -796,7 +839,7 @@ body[data-cardback="custom-image"] .backCard::after{
 <script>
 (() => {
   'use strict';
-  const VERSION = 'v37.0.0';
+  const VERSION = 'v38.0.0';
   const SAVE_KEY = 'golf_pwa_v5_save';
   const PREF_KEY = 'golf_pwa_v5_prefs';
   const RANKS = ['A','2','3','4','5','6','7','8','9','10','J','Q','K'];
@@ -805,9 +848,9 @@ body[data-cardback="custom-image"] .backCard::after{
   const AI_NAMES = ['Maya','Leo','Riley','Sam','Nora','Theo','Ivy','Owen','Milo','Ava','Finn','Zoe','Eli','Luna','Cole','Harper','Quinn','Rowan','Max','Nina','Caleb','Wren','Miles','Sophie','Ethan','Aria','Felix','Ruby','Logan','Piper','Grace','Mason','Chloe','Silas','Emma','Lucas','Hazel','Ben','Olive','Ezra','Clara','Noah','Tessa','Gabe','Mira'];
   const $ = id => document.getElementById(id);
   const els = {};
-  ['app','game','table','seatLayer','holeChip','modeChip','dealerChip','tieChip','drawPileBtn','discardPileBtn','deckCount','discardCount','actionBanner','sideUtilityPanel','sideScoresBtn','sideLogBtn','sideUtilityContent','tableControls','startHoleBtn','viewResultsBtn','nextFromTableBtn','skipScoreBtn','peekBtn','cancelActionBtn','scorecardBtn','cardBackBlock','cardBackToggle','drawer','drawerTab','drawerHome','drawerSub','closeDrawer','versionLabel','scoreList','logEntries','splash','startBtn','continueBtn','splashRulesBtn','setupModal','setupCloseBtn','setupAiCount','setupCards','setupHoles','setupDifficulty','setupLookRule','setupSwapToggle','setupTieToggle','cancelNewGame','confirmNewGame','drawModal','drawModalTitle','drawModalBody','drawModalClose','discardDrawnBtn','replaceDrawnBtn','peekModal','peekBody','peekCloseBtn','swapBottomBtn','peekDoneBtn','holeModal','holeModalTitle','holeModalBody','backToTableBtn','nextHoleBtn','finishToSplashBtn','toast','newGameMenuBtn','lookRuleSelect','swapKnownToggle','tieToggle','aiPaceSelect','faceSelect','cardBackGallery','cardBackSummary','customCardBack','customCardImage','customFelt','bottomSafeSelect','bottomUiReachSelect','bottomProbeBtn'].forEach(id => els[id] = $(id));
+  ['app','game','table','seatLayer','holeChip','modeChip','dealerChip','tieChip','drawPileBtn','discardPileBtn','deckCount','discardCount','actionBanner','sideUtilityPanel','sideScoresBtn','sideLogBtn','sideUtilityContent','tableControls','startHoleBtn','viewResultsBtn','nextFromTableBtn','skipScoreBtn','peekBtn','cancelActionBtn','scorecardBtn','cardBackBlock','cardBackToggle','drawer','drawerTab','drawerHome','drawerSub','closeDrawer','versionLabel','scoreList','logEntries','splash','startBtn','continueBtn','splashRulesBtn','setupModal','setupCloseBtn','setupAiCount','setupCards','setupHoles','setupDifficulty','setupLookRule','setupSwapToggle','setupTieToggle','cancelNewGame','confirmNewGame','drawModal','drawModalTitle','drawModalBody','drawModalClose','discardDrawnBtn','replaceDrawnBtn','peekModal','peekBody','peekCloseBtn','swapBottomBtn','peekDoneBtn','holeModal','holeModalTitle','holeModalBody','backToTableBtn','nextHoleBtn','finishToSplashBtn','toast','newGameMenuBtn','lookRuleSelect','swapKnownToggle','tieToggle','aiPaceSelect','faceSelect','cardBackGallery','cardBackSummary','customCardBack','customCardImage','customFelt','sideLayoutSelect','bottomSafeSelect','bottomUiReachSelect','bottomProbeBtn'].forEach(id => els[id] = $(id));
 
-  const prefsDefault = {lookRule:'anytime', allowSwap:true, tiebreaker:true, aiPace:'normal', face:'light', cardBack:'classic', customCardBack:'#1e4e8c', customCardImage:'', felt:'#0a5a3c', feltDeep:'#084a33', bottomSafeMode:'html-body-deep'};
+  const prefsDefault = {lookRule:'anytime', allowSwap:true, tiebreaker:true, aiPace:'normal', face:'light', cardBack:'classic', customCardBack:'#1e4e8c', customCardImage:'', felt:'#0a5a3c', feltDeep:'#084a33', bottomSafeMode:'html-body-deep', sideLayout:'default'};
   let prefs = {...prefsDefault};
   let state = emptyState();
   let drawerDrag = null;
@@ -845,6 +888,8 @@ body[data-cardback="custom-image"] .backCard::after{
     document.documentElement.style.setProperty('--custom-card-image', prefs.customCardImage ? `url("${prefs.customCardImage}")` : 'linear-gradient(180deg,#222,#111)');
     setFelt(prefs.felt || '#0a5a3c', prefs.feltDeep || makeDarkerColor(prefs.felt || '#0a5a3c'), false);
     applyBottomSafeMode();
+    document.body.classList.toggle('side-swap', prefs.sideLayout === 'swapped');
+    if(els.sideLayoutSelect) els.sideLayoutSelect.value = prefs.sideLayout || 'default';
     if(els.bottomSafeSelect) els.bottomSafeSelect.value = prefs.bottomSafeMode || 'html-body-deep';
     els.lookRuleSelect.value = prefs.lookRule;
     els.aiPaceSelect.value = prefs.aiPace;
@@ -969,7 +1014,7 @@ body[data-cardback="custom-image"] .backCard::after{
   }
 
   function init(){
-    els.versionLabel.textContent = 'v37';
+    els.versionLabel.textContent = 'v38';
     loadPrefs(); bindEvents(); updateContinueButton(); render();
     window.addEventListener('resize', () => requestAnimationFrame(adjustBottomLayout));
     window.visualViewport?.addEventListener('resize', () => requestAnimationFrame(adjustBottomLayout));
@@ -1018,6 +1063,7 @@ body[data-cardback="custom-image"] .backCard::after{
     els.setupTieToggle.addEventListener('click', () => { togglePref('tiebreaker', els.setupTieToggle); setToggle(els.tieToggle, prefs.tiebreaker); });
     els.aiPaceSelect.addEventListener('change', () => { prefs.aiPace = els.aiPaceSelect.value; savePrefs(); });
     els.faceSelect.addEventListener('change', () => { prefs.face = els.faceSelect.value; applyPrefs(); savePrefs(); render(); });
+    els.sideLayoutSelect?.addEventListener('change', () => { prefs.sideLayout = els.sideLayoutSelect.value; applyPrefs(); savePrefs(); render(); });
     document.querySelectorAll('[data-backstyle]').forEach(btn => btn.addEventListener('click', () => { setCardBack(btn.dataset.backstyle); render(); }));
     els.cardBackToggle.addEventListener('click', () => toggleCardBackBlock());
     els.customCardBack.addEventListener('input', () => { prefs.customCardBack = els.customCardBack.value; setCardBack('custom-solid', false); applyPrefs(); savePrefs(); render(); });
