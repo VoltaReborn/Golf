@@ -648,7 +648,7 @@ body[data-cardback="custom-image"] .backCard::after{
 
 
 
-/* v39: seamless score tally handoff and fixed review-tag layout */
+/* v40: timeout-safe score tally animation */
 .drawerTab{top:calc(70dvh - 31px)!important;}
 /* Keep your cards large enough to play comfortably again. */
 .seat.human{--seat-card-w:clamp(50px,14vw,64px)!important;}
@@ -741,7 +741,7 @@ body.side-swap .tableControls{right:auto!important;left:8px!important;}
           <button class="drawerMenuBtn" id="newGameMenuBtn" type="button">Start New Game <small>fresh course</small></button>
           <button class="drawerMenuBtn" data-page="rulesPage" type="button">Rules <small>how to play</small></button>
         </nav>
-        <div class="drawerVersionBadge"><strong id="versionLabel">v39</strong></div>
+        <div class="drawerVersionBadge"><strong id="versionLabel">v40</strong></div>
       </div>
       <section class="subpage" id="scorePage"><div class="subTop"><button class="backBtn" type="button">‹</button><div class="subTitle">Scorecard</div></div><div id="scoreList"></div></section>
       <section class="subpage" id="logPage"><div class="subTop"><button class="backBtn" type="button">‹</button><div class="subTitle">Log</div></div><div id="logEntries"></div></section>
@@ -839,7 +839,7 @@ body.side-swap .tableControls{right:auto!important;left:8px!important;}
 <script>
 (() => {
   'use strict';
-  const VERSION = 'v39.0.0';
+  const VERSION = 'v40.0.0';
   const SAVE_KEY = 'golf_pwa_v5_save';
   const PREF_KEY = 'golf_pwa_v5_prefs';
   const RANKS = ['A','2','3','4','5','6','7','8','9','10','J','Q','K'];
@@ -1014,7 +1014,7 @@ body.side-swap .tableControls{right:auto!important;left:8px!important;}
   }
 
   function init(){
-    els.versionLabel.textContent = 'v39';
+    els.versionLabel.textContent = 'v40';
     loadPrefs(); bindEvents(); updateContinueButton(); render();
     window.addEventListener('resize', () => requestAnimationFrame(adjustBottomLayout));
     window.visualViewport?.addEventListener('resize', () => requestAnimationFrame(adjustBottomLayout));
@@ -1911,21 +1911,50 @@ body.side-swap .tableControls{right:auto!important;left:8px!important;}
   }
   async function animateScorePill(row){
     const pill = document.querySelector(`[data-score-player="${row.playerId}"]`); if(!pill) return;
-    const rect = pill.getBoundingClientRect(); const computed = getComputedStyle(pill);
-    const clone = document.createElement('div'); clone.className = 'scorePillClone'; clone.textContent = row.oldTotal;
-    clone.style.left = rect.left + 'px'; clone.style.top = rect.top + 'px'; clone.style.width = Math.max(1, rect.width) + 'px'; clone.style.height = Math.max(1, rect.height) + 'px';
-    clone.style.fontSize = computed.fontSize; clone.style.fontWeight = computed.fontWeight; clone.style.fontFamily = computed.fontFamily; clone.style.lineHeight = computed.lineHeight; clone.style.padding = computed.padding; clone.style.borderRadius = computed.borderRadius;
+    const startRect = pill.getBoundingClientRect();
+    const computed = getComputedStyle(pill);
+    const clone = document.createElement('div');
+    clone.className = 'scorePillClone';
+    clone.textContent = row.oldTotal;
+    clone.style.left = startRect.left + 'px';
+    clone.style.top = startRect.top + 'px';
+    clone.style.width = Math.max(1, startRect.width) + 'px';
+    clone.style.height = Math.max(1, startRect.height) + 'px';
+    clone.style.fontSize = computed.fontSize;
+    clone.style.fontWeight = computed.fontWeight;
+    clone.style.fontFamily = computed.fontFamily;
+    clone.style.lineHeight = computed.lineHeight;
+    clone.style.padding = computed.padding;
+    clone.style.borderRadius = computed.borderRadius;
+    clone.style.transition = 'none';
+    clone.style.transform = 'scale(1)';
     document.body.appendChild(clone);
     pill.classList.add('scoreTallyHidden');
-    await clone.animate([{transform:'scale(1)',opacity:1},{transform:'scale(2.55)',opacity:1}],{duration:280,easing:'cubic-bezier(.20,.82,.22,1)',fill:'forwards'}).finished.catch(()=>{});
-    const start = Number(row.oldTotal) || 0; const end = Number(row.newTotal) || 0;
-    if(end > start){
-      const steps = end - start; const delay = Math.max(24, Math.min(62, 720 / Math.max(1, steps)));
-      for(let v=start+1; v<=end; v++){ if(skipTally) break; clone.textContent = String(v); await sleep(delay); }
-    } else { clone.textContent = String(end); await sleep(220); }
 
-    // Commit this player's score immediately and keep the real pill in its final state
-    // under the clone, so later player tally renders cannot briefly revert or shift it.
+    // v40: avoid WAAPI .finished for this tally. On some iOS/Safari builds the promise can stall
+    // right at the first enlargement, freezing the entire score sequence. Use transitions + sleeps
+    // so the sequence always advances even if a transition event is dropped.
+    await nextFrame();
+    clone.style.transition = 'transform 280ms cubic-bezier(.20,.82,.22,1), opacity 280ms ease';
+    clone.style.transform = 'scale(2.55)';
+    await sleep(300);
+
+    const start = Number(row.oldTotal) || 0;
+    const end = Number(row.newTotal) || 0;
+    if(end > start){
+      const steps = end - start;
+      const delay = Math.max(24, Math.min(62, 720 / Math.max(1, steps)));
+      for(let v=start+1; v<=end; v++){
+        if(skipTally) break;
+        clone.textContent = String(v);
+        await sleep(delay);
+      }
+    } else {
+      clone.textContent = String(end);
+      await sleep(220);
+    }
+
+    // Commit this player's score immediately and keep it committed for the rest of the tally.
     pill.textContent = String(end);
     const statePlayer = state.players.find(p => p.id === row.playerId);
     if(statePlayer) statePlayer.total = end;
@@ -1934,13 +1963,21 @@ body.side-swap .tableControls{right:auto!important;left:8px!important;}
       const reviewRow = state.review.rows.find(r => r.playerId === row.playerId);
       if(reviewRow) reviewRow.total = end;
     }
+
     await nextFrame();
     const finalRect = pill.getBoundingClientRect();
-    await clone.animate([
-      {left:rect.left + 'px', top:rect.top + 'px', width:Math.max(1, rect.width) + 'px', height:Math.max(1, rect.height) + 'px', transform:'scale(2.55)', opacity:1},
-      {left:finalRect.left + 'px', top:finalRect.top + 'px', width:Math.max(1, finalRect.width) + 'px', height:Math.max(1, finalRect.height) + 'px', transform:'scale(1)', opacity:1}
-    ],{duration:310,easing:'cubic-bezier(.20,.82,.22,1)',fill:'forwards'}).finished.catch(()=>{});
-    clone.style.left = finalRect.left + 'px'; clone.style.top = finalRect.top + 'px'; clone.style.width = Math.max(1, finalRect.width) + 'px'; clone.style.height = Math.max(1, finalRect.height) + 'px'; clone.style.transform = 'scale(1)';
+    clone.style.transition = 'left 310ms cubic-bezier(.20,.82,.22,1), top 310ms cubic-bezier(.20,.82,.22,1), width 310ms cubic-bezier(.20,.82,.22,1), height 310ms cubic-bezier(.20,.82,.22,1), transform 310ms cubic-bezier(.20,.82,.22,1), opacity 310ms ease';
+    clone.style.left = finalRect.left + 'px';
+    clone.style.top = finalRect.top + 'px';
+    clone.style.width = Math.max(1, finalRect.width) + 'px';
+    clone.style.height = Math.max(1, finalRect.height) + 'px';
+    clone.style.transform = 'scale(1)';
+    await sleep(330);
+
+    clone.style.left = finalRect.left + 'px';
+    clone.style.top = finalRect.top + 'px';
+    clone.style.width = Math.max(1, finalRect.width) + 'px';
+    clone.style.height = Math.max(1, finalRect.height) + 'px';
     await nextFrame();
     pill.classList.remove('scoreTallyHidden');
     await nextFrame();
