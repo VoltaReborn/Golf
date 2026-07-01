@@ -331,94 +331,19 @@ body::before{
 }
 
 
-/* v26: experimental PWA bottom safe-area/reach modes */
-body[data-safe-mode="standard"] .tableControls{bottom:max(4px,calc(var(--safe-bottom) * .12))!important;}
-body[data-safe-mode="paint"] .table{bottom:calc(var(--safe-bottom) * -0.65)!important;}
-body[data-safe-mode="paint"] .table::before{height:max(78px,calc(var(--safe-bottom) + 48px))!important;}
-body[data-safe-mode="deep-board"] .app{height:calc(100dvh + var(--safe-bottom) + 22px)!important;min-height:calc(100dvh + var(--safe-bottom) + 22px)!important;bottom:calc((var(--safe-bottom) + 22px) * -1)!important;}
-body[data-safe-mode="deep-board"] .table{bottom:calc((var(--safe-bottom) + 22px) * -1)!important;}
-body[data-safe-mode="deep-board"] .tableControls{bottom:max(4px,calc(var(--safe-bottom) * .08))!important;}
-body[data-safe-mode="controls-low"] .table{bottom:calc(var(--safe-bottom) * -0.4)!important;}
-body[data-safe-mode="controls-low"] .tableControls{bottom:0!important;}
-body[data-safe-mode="unsafe-controls"] .table{bottom:calc(var(--safe-bottom) * -0.85)!important;}
-body[data-safe-mode="unsafe-controls"] .tableControls{bottom:calc(var(--safe-bottom) * -0.45)!important;}
-body[data-safe-mode="edge-controls"] .table{bottom:calc((var(--safe-bottom) + 12px) * -1)!important;}
-body[data-safe-mode="edge-controls"] .tableControls{bottom:calc((var(--safe-bottom) + 6px) * -1)!important;}
-body[data-safe-mode="overdrive"] .app{height:calc(100dvh + var(--safe-bottom) + 56px)!important;min-height:calc(100dvh + var(--safe-bottom) + 56px)!important;bottom:calc((var(--safe-bottom) + 56px) * -1)!important;}
-body[data-safe-mode="overdrive"] .game{inset:0 0 calc((var(--safe-bottom) + 56px) * -1) 0!important;}
-body[data-safe-mode="overdrive"] .table{bottom:calc((var(--safe-bottom) + 56px) * -1)!important;}
-body[data-safe-mode="overdrive"] .tableControls{bottom:calc((var(--safe-bottom) + 18px) * -1)!important;}
-body[data-safe-mode="overdrive"] .seat.human{transform:translate(-50%,-51%)!important;}
 
-
-
-
-
-/* v30: actual UI reach experiments — body/viewport fixed controls, not just color painting */
-.bottomProbe{
-  position:fixed;
-  z-index:12000;
-  left:50%;
-  transform:translateX(-50%);
-  min-height:30px;
-  padding:5px 12px;
-  border-radius:999px;
-  border:1px solid rgba(240,202,104,.8);
-  background:rgba(7,11,16,.94);
-  color:#fff7d2;
-  font-size:.68rem;
-  font-weight:1000;
-  box-shadow:0 8px 18px rgba(0,0,0,.38),0 0 14px rgba(240,202,104,.22);
+/* v31: make the selected discard card visibly hover while the player chooses a destination */
+.pileBtn.discardPreview .card{
+  animation:discardPreviewLift 1.05s ease-in-out infinite;
+  transform-origin:center center;
+  outline:2px solid rgba(240,202,104,.86);
+  outline-offset:4px;
+  box-shadow:0 0 0 3px rgba(240,202,104,.14),0 14px 26px rgba(0,0,0,.46),0 0 18px rgba(240,202,104,.32),inset 0 1px 0 rgba(255,255,255,.35);
 }
-.bottomProbe.hidden{display:none!important}
-body[data-ui-reach="fixed-safe"] .tableControls,
-body[data-ui-reach="fixed-zero"] .tableControls,
-body[data-ui-reach="fixed-half"] .tableControls,
-body[data-ui-reach="fixed-full"] .tableControls,
-body[data-ui-reach="fixed-past"] .tableControls,
-body[data-ui-reach="fixed-extreme"] .tableControls{
-  position:fixed!important;
-  left:50%!important;
-  transform:translateX(-50%)!important;
-  width:min(calc(100vw - 10px),390px)!important;
-  max-width:min(calc(100vw - 10px),390px)!important;
-  z-index:11800!important;
-  border-color:rgba(126,225,255,.28)!important;
-  box-shadow:0 10px 24px rgba(0,0,0,.38),0 0 0 1px rgba(126,225,255,.10)!important;
+@keyframes discardPreviewLift{
+  0%,100%{transform:translateY(-3px) scale(1.08);filter:brightness(1.06)}
+  50%{transform:translateY(-11px) scale(1.18);filter:brightness(1.14)}
 }
-body[data-ui-reach="fixed-safe"] .tableControls{bottom:max(4px,calc(var(--safe-bottom) * .10))!important}
-body[data-ui-reach="fixed-zero"] .tableControls{bottom:0!important}
-body[data-ui-reach="fixed-half"] .tableControls{bottom:calc(var(--safe-bottom) * -.50)!important}
-body[data-ui-reach="fixed-full"] .tableControls{bottom:calc((var(--safe-bottom) + 2px) * -1)!important}
-body[data-ui-reach="fixed-past"] .tableControls{bottom:calc((var(--safe-bottom) + 18px) * -1)!important}
-body[data-ui-reach="fixed-extreme"] .tableControls{bottom:-44px!important}
-body[data-ui-reach="probe-zero"] .bottomProbe,
-body[data-ui-reach="probe-half"] .bottomProbe,
-body[data-ui-reach="probe-full"] .bottomProbe,
-body[data-ui-reach="probe-past"] .bottomProbe,
-body[data-ui-reach="probe-extreme"] .bottomProbe,
-body[data-ui-reach="hybrid-control-probe"] .bottomProbe{display:block!important}
-body[data-ui-reach="probe-zero"] .bottomProbe{bottom:0}
-body[data-ui-reach="probe-half"] .bottomProbe{bottom:calc(var(--safe-bottom) * -.50)}
-body[data-ui-reach="probe-full"] .bottomProbe{bottom:calc((var(--safe-bottom) + 2px) * -1)}
-body[data-ui-reach="probe-past"] .bottomProbe{bottom:calc((var(--safe-bottom) + 18px) * -1)}
-body[data-ui-reach="probe-extreme"] .bottomProbe{bottom:-44px}
-body[data-ui-reach="hybrid-control-probe"] .tableControls{
-  position:fixed!important;
-  left:50%!important;
-  transform:translateX(-50%)!important;
-  width:min(calc(100vw - 10px),390px)!important;
-  max-width:min(calc(100vw - 10px),390px)!important;
-  bottom:0!important;
-  z-index:11800!important;
-}
-body[data-ui-reach="hybrid-control-probe"] .bottomProbe{bottom:calc((var(--safe-bottom) + 8px) * -1)}
-body[data-ui-reach="fixed-zero"] .seat.human,
-body[data-ui-reach="fixed-half"] .seat.human,
-body[data-ui-reach="fixed-full"] .seat.human,
-body[data-ui-reach="fixed-past"] .seat.human,
-body[data-ui-reach="fixed-extreme"] .seat.human,
-body[data-ui-reach="hybrid-control-probe"] .seat.human{transition:none!important}
 
 /* v30: iOS PWA bottom strip belongs to html/body, so paint those layers directly */
 :root{
@@ -491,7 +416,6 @@ body[data-safe-mode="fixed-plus-deep"] .toast{z-index:1;}
     </section>
   </main>
 </div>
-<button class="bottomProbe hidden" id="bottomProbeBtn" type="button">Bottom UI test</button>
 <aside class="drawer" id="drawer" aria-label="Game menu">
   <button class="drawerTab" id="drawerTab" type="button" aria-label="Open menu"><span>‹</span></button>
   <div class="drawerBody">
@@ -505,7 +429,7 @@ body[data-safe-mode="fixed-plus-deep"] .toast{z-index:1;}
           <button class="drawerMenuBtn" id="newGameMenuBtn" type="button">Start New Game <small>fresh course</small></button>
           <button class="drawerMenuBtn" data-page="rulesPage" type="button">Rules <small>how to play</small></button>
         </nav>
-        <div class="drawerVersionBadge"><strong id="versionLabel">v30</strong></div>
+        <div class="drawerVersionBadge"><strong id="versionLabel">v31</strong></div>
       </div>
       <section class="subpage" id="scorePage"><div class="subTop"><button class="backBtn" type="button">‹</button><div class="subTitle">Scorecard</div></div><div id="scoreList"></div></section>
       <section class="subpage" id="logPage"><div class="subTop"><button class="backBtn" type="button">‹</button><div class="subTitle">Log</div></div><div id="logEntries"></div></section>
@@ -552,36 +476,6 @@ body[data-safe-mode="fixed-plus-deep"] .toast{z-index:1;}
             </div></div>
             <div class="controlRow"><label for="customFelt">Custom felt</label><input id="customFelt" type="color" value="#0a5a3c" /></div>
           </div>
-          <div class="sectionBox"><h3>PWA bottom color fill</h3>
-            <div class="controlRow"><label for="bottomSafeSelect">Bottom strip mode</label><select id="bottomSafeSelect">
-              <option value="html-body-deep">HTML + body: table color</option>
-              <option value="html-body-felt">HTML + body: felt color</option>
-              <option value="html-deep">HTML only: table color</option>
-              <option value="body-deep">Body only: table color</option>
-              <option value="html-felt">HTML only: felt color</option>
-              <option value="body-felt">Body only: felt color</option>
-              <option value="fixed-plus-deep">Fixed fill + HTML/body table</option>
-              <option value="debug-html">Debug HTML red</option>
-              <option value="debug-body">Debug body blue</option>
-            </select></div>
-            <p class="smallHelp">The debug test showed the bottom strip belongs to the HTML/body background, not the table layer. These options deliberately paint those layers so the iPhone bottom strip can match the game instead of staying as the wrong leftover color.</p>
-          </div>
-          <div class="sectionBox"><h3>Bottom UI reach test</h3>
-            <div class="controlRow"><label for="bottomUiReachSelect">UI reach mode</label><select id="bottomUiReachSelect">
-              <option value="normal">Normal controls</option>
-              <option value="fixed-safe">Fixed controls: safe</option>
-              <option value="fixed-zero">Fixed controls: bottom 0</option>
-              <option value="fixed-half">Fixed controls: halfway into strip</option>
-              <option value="fixed-full">Fixed controls: full strip offset</option>
-              <option value="fixed-past">Fixed controls: past strip</option>
-              <option value="fixed-extreme">Fixed controls: extreme</option>
-              <option value="probe-zero">Probe button: bottom 0</option>
-              <option value="probe-half">Probe button: halfway into strip</option>
-              <option value="probe-full">Probe button: full strip offset</option>
-              <option value="probe-past">Probe button: past strip</option>
-              <option value="probe-extreme">Probe button: extreme</option>
-              <option value="hybrid-control-probe">Controls bottom 0 + probe past</option>
-            </select></div>
             <p class="smallHelp">These options test actual tappable UI in the iPhone bottom area by using fixed body-level positioning instead of only stretching the game board. Some choices are intentionally unsafe/unusable so we can identify the real boundary.</p>
           </div>
         </div>
@@ -627,7 +521,7 @@ body[data-safe-mode="fixed-plus-deep"] .toast{z-index:1;}
 <script>
 (() => {
   'use strict';
-  const VERSION = 'v30.0.0';
+  const VERSION = 'v31.0.0';
   const SAVE_KEY = 'golf_pwa_v5_save';
   const PREF_KEY = 'golf_pwa_v5_prefs';
   const RANKS = ['A','2','3','4','5','6','7','8','9','10','J','Q','K'];
@@ -638,7 +532,7 @@ body[data-safe-mode="fixed-plus-deep"] .toast{z-index:1;}
   const els = {};
   ['app','game','table','seatLayer','holeChip','modeChip','dealerChip','tieChip','drawPileBtn','discardPileBtn','deckCount','discardCount','actionBanner','tableControls','startHoleBtn','viewResultsBtn','nextFromTableBtn','skipScoreBtn','peekBtn','cancelActionBtn','scorecardBtn','cardBackBlock','cardBackToggle','drawer','drawerTab','drawerHome','drawerSub','closeDrawer','versionLabel','scoreList','logEntries','splash','startBtn','continueBtn','splashRulesBtn','setupModal','setupCloseBtn','setupAiCount','setupCards','setupHoles','setupDifficulty','setupLookRule','setupSwapToggle','setupTieToggle','cancelNewGame','confirmNewGame','drawModal','drawModalTitle','drawModalBody','drawModalClose','discardDrawnBtn','replaceDrawnBtn','peekModal','peekBody','peekCloseBtn','swapBottomBtn','peekDoneBtn','holeModal','holeModalTitle','holeModalBody','backToTableBtn','nextHoleBtn','finishToSplashBtn','toast','newGameMenuBtn','lookRuleSelect','swapKnownToggle','tieToggle','aiPaceSelect','faceSelect','cardBackGallery','cardBackSummary','customCardBack','customFelt','bottomSafeSelect','bottomUiReachSelect','bottomProbeBtn'].forEach(id => els[id] = $(id));
 
-  const prefsDefault = {lookRule:'anytime', allowSwap:true, tiebreaker:true, aiPace:'normal', face:'light', cardBack:'classic', customCardBack:'#1e4e8c', felt:'#0a5a3c', feltDeep:'#084a33', bottomSafeMode:'html-body-deep', bottomUiReach:'normal'};
+  const prefsDefault = {lookRule:'anytime', allowSwap:true, tiebreaker:true, aiPace:'normal', face:'light', cardBack:'classic', customCardBack:'#1e4e8c', felt:'#0a5a3c', feltDeep:'#084a33', bottomSafeMode:'html-body-deep'};
   let prefs = {...prefsDefault};
   let state = emptyState();
   let drawerDrag = null;
@@ -655,7 +549,7 @@ body[data-safe-mode="fixed-plus-deep"] .toast{z-index:1;}
   function shuffle(arr){ for(let i=arr.length-1;i>0;i--){ const j=Math.floor(Math.random()*(i+1)); [arr[i],arr[j]]=[arr[j],arr[i]]; } return arr; }
   function safeJsonParse(raw){ try { return raw ? JSON.parse(raw) : null; } catch { return null; } }
   function savePrefs(){ localStorage.setItem(PREF_KEY, JSON.stringify(prefs)); }
-  function loadPrefs(){ const saved = safeJsonParse(localStorage.getItem(PREF_KEY)); if(saved && typeof saved === 'object') prefs = {...prefsDefault, ...saved}; applyPrefs(); }
+  function loadPrefs(){ const saved = safeJsonParse(localStorage.getItem(PREF_KEY)); if(saved && typeof saved === 'object') prefs = {...prefsDefault, ...saved}; delete prefs.bottomUiReach; prefs.bottomSafeMode = 'html-body-deep'; applyPrefs(); }
   function saveGame(){ if(!state.active || state.over){ localStorage.removeItem(SAVE_KEY); updateContinueButton(); return; } localStorage.setItem(SAVE_KEY, JSON.stringify(state)); updateContinueButton(); }
   function loadSavedGame(){ const saved = safeJsonParse(localStorage.getItem(SAVE_KEY)); if(!isValidSave(saved)){ localStorage.removeItem(SAVE_KEY); return false; } state = saved; state.drawnCard = state.drawnCard || null; state.pending = state.pending || null; state.review = state.review || null; state.holeStarted = !!state.holeStarted; if(state.review?.tallying || (state.review && !state.review.scoringDone)){ finalizeCurrentReview({silent:true}); } return true; }
   function isValidSave(s){ return !!(s && s.version && s.active && Array.isArray(s.players) && s.players.length >= 2 && [4,6].includes(s.cardCount) && [9,18].includes(s.holes) && Number.isInteger(s.hole) && Array.isArray(s.deck) && Array.isArray(s.discard) && s.players.every(p => p && Array.isArray(p.grid) && p.grid.length === s.cardCount)); }
@@ -675,8 +569,6 @@ body[data-safe-mode="fixed-plus-deep"] .toast{z-index:1;}
     setFelt(prefs.felt || '#0a5a3c', prefs.feltDeep || makeDarkerColor(prefs.felt || '#0a5a3c'), false);
     applyBottomSafeMode();
     if(els.bottomSafeSelect) els.bottomSafeSelect.value = prefs.bottomSafeMode || 'html-body-deep';
-    applyBottomUiReachMode();
-    if(els.bottomUiReachSelect) els.bottomUiReachSelect.value = prefs.bottomUiReach || 'normal';
     els.lookRuleSelect.value = prefs.lookRule;
     els.aiPaceSelect.value = prefs.aiPace;
     els.faceSelect.value = prefs.face;
@@ -713,15 +605,7 @@ body[data-safe-mode="fixed-plus-deep"] .toast{z-index:1;}
     requestAnimationFrame(() => adjustBottomLayout());
   }
 
-  function applyBottomUiReachMode(){
-    const allowed = new Set(['normal','fixed-safe','fixed-zero','fixed-half','fixed-full','fixed-past','fixed-extreme','probe-zero','probe-half','probe-full','probe-past','probe-extreme','hybrid-control-probe']);
-    let mode = prefs.bottomUiReach || 'normal';
-    if(!allowed.has(mode)) mode = 'normal';
-    prefs.bottomUiReach = mode;
-    document.body.dataset.uiReach = mode;
-    if(els.bottomUiReachSelect && els.bottomUiReachSelect.value !== mode) els.bottomUiReachSelect.value = mode;
-    requestAnimationFrame(() => adjustBottomLayout());
-  }
+  function applyBottomUiReachMode(){ delete document.body.dataset.uiReach; }
 
   function applyViewportMetaForMode(mode){
     const meta = document.querySelector('meta[name="viewport"]');
@@ -756,7 +640,7 @@ body[data-safe-mode="fixed-plus-deep"] .toast{z-index:1;}
   function togglePref(key, el){ prefs[key] = !prefs[key]; setToggle(el, prefs[key]); savePrefs(); }
 
   function init(){
-    els.versionLabel.textContent = 'v30';
+    els.versionLabel.textContent = 'v31';
     loadPrefs(); bindEvents(); updateContinueButton(); render();
     window.addEventListener('resize', () => requestAnimationFrame(adjustBottomLayout));
     window.visualViewport?.addEventListener('resize', () => requestAnimationFrame(adjustBottomLayout));
@@ -807,9 +691,6 @@ body[data-safe-mode="fixed-plus-deep"] .toast{z-index:1;}
     els.cardBackToggle.addEventListener('click', () => toggleCardBackBlock());
     els.customCardBack.addEventListener('input', () => { prefs.customCardBack = els.customCardBack.value; setCardBack('custom-solid', false); applyPrefs(); savePrefs(); render(); });
     els.customFelt.addEventListener('input', () => setFelt(els.customFelt.value, makeDarkerColor(els.customFelt.value)));
-    if(els.bottomSafeSelect) els.bottomSafeSelect.addEventListener('change', () => { prefs.bottomSafeMode = els.bottomSafeSelect.value; applyBottomSafeMode(); savePrefs(); toast('Bottom color: ' + els.bottomSafeSelect.options[els.bottomSafeSelect.selectedIndex].text); });
-    if(els.bottomUiReachSelect) els.bottomUiReachSelect.addEventListener('change', () => { prefs.bottomUiReach = els.bottomUiReachSelect.value; applyBottomUiReachMode(); savePrefs(); toast('UI reach: ' + els.bottomUiReachSelect.options[els.bottomUiReachSelect.selectedIndex].text); });
-    if(els.bottomProbeBtn) els.bottomProbeBtn.addEventListener('click', () => toast('Bottom probe tapped.'));
     document.querySelectorAll('[data-felt]').forEach(btn => btn.addEventListener('click', () => { setFelt(btn.dataset.felt, btn.dataset.feltDeep || makeDarkerColor(btn.dataset.felt)); els.customFelt.value = prefs.felt; }));
   }
   function bindDrawerDrag(){
@@ -1017,6 +898,7 @@ body[data-safe-mode="fixed-plus-deep"] .toast{z-index:1;}
   function renderPiles(){
     els.drawPileBtn.innerHTML = state.active ? renderBackCard() : renderBackCard();
     els.discardPileBtn.innerHTML = state.active && topDiscard() ? renderCard(topDiscard()) : '<div class="backCard" style="opacity:.25"></div>';
+    els.discardPileBtn.classList.toggle('discardPreview', !!(state.pending && state.pending.type === 'replaceDiscard' && currentPlayer()?.human && topDiscard()));
   }
   function renderSeats(){
     if(!state.active){ els.seatLayer.innerHTML = ''; return; }
@@ -1407,7 +1289,9 @@ body[data-safe-mode="fixed-plus-deep"] .toast{z-index:1;}
   function chooseReplaceDrawn(){ if(!state.drawnCard) return; closeModal(els.drawModal); state.pending = {type:'replaceDrawn'}; state.message = 'Choose a face-down card to replace. Face-up cards are locked.'; render(); saveGame(); }
   function humanTakeDiscard(){
     if(!state.active || !state.holeStarted || state.review || !currentPlayer()?.human || state.pending || state.drawnCard || !topDiscard()) return;
-    state.pending = {type:'replaceDiscard'}; state.message = 'Choose a face-down card to replace with ' + cardName(topDiscard()) + '. Face-up cards are locked.'; render(); saveGame();
+    state.pending = {type:'replaceDiscard'};
+    state.message = cardName(topDiscard()) + ' is lifted from the discard pile. Choose where it goes.';
+    render(); saveGame();
   }
   async function selectHumanSlot(index){
     const p = currentPlayer(); if(!p?.human || !state.pending || motionBusy) return;
@@ -1702,6 +1586,13 @@ body[data-safe-mode="fixed-plus-deep"] .toast{z-index:1;}
       for(let v=start+1; v<=end; v++){ if(skipTally) break; clone.textContent = String(v); await sleep(delay); }
     } else { clone.textContent = String(end); await sleep(220); }
     pill.textContent = String(end);
+    const statePlayer = state.players.find(p => p.id === row.playerId);
+    if(statePlayer) statePlayer.total = end;
+    row.total = end;
+    if(state.review?.rows){
+      const reviewRow = state.review.rows.find(r => r.playerId === row.playerId);
+      if(reviewRow) reviewRow.total = end;
+    }
     await clone.animate([{transform:'scale(2.55)',opacity:1},{transform:'scale(1)',opacity:1}],{duration:310,easing:'cubic-bezier(.20,.82,.22,1)',fill:'forwards'}).finished.catch(()=>{});
     clone.remove(); pill.classList.remove('scoreTallyHidden');
   }
