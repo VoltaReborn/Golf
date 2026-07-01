@@ -727,13 +727,16 @@ body.side-swap .tableControls{right:auto!important;left:8px!important;}
 .updateStale{color:#fff0a8!important;font-weight:1000!important}
 
 
-/* v47: simplified app update controls */
+/* v48: simplified app update controls */
 .drawerHome{min-height:100%;display:flex;flex-direction:column;}
 .drawerHome nav{flex:1 1 auto;}
-.drawerFooterTools{margin-top:auto;padding-top:10px;display:flex;align-items:center;gap:8px;border-top:1px solid rgba(255,255,255,.10);}
-.drawerUpdateBtn{flex:1 1 auto;min-height:40px;border:1px solid rgba(255,255,255,.16);border-radius:999px;background:rgba(255,255,255,.075);color:var(--gold);font-size:.74rem;font-weight:1000;text-transform:uppercase;letter-spacing:.06em;display:flex;align-items:center;justify-content:center;gap:6px;padding:7px 10px;}
-.drawerUpdateBtn small{font-size:.60rem;letter-spacing:0;text-transform:none;color:var(--muted);font-weight:900;}
-.drawerFooterTools .drawerVersionBadge{margin:0;flex:0 0 auto;}
+.drawerFooterTools{margin-top:auto;padding-top:10px;display:flex;align-items:center;justify-content:flex-end;gap:8px;border-top:0!important;}
+.drawerFooterTools .drawerVersionBadge{margin:0;flex:0 0 auto;min-height:34px;border:1px solid rgba(240,202,104,.30);border-radius:999px;background:rgba(0,0,0,.30);color:var(--gold);display:inline-flex;align-items:center;justify-content:center;gap:6px;padding:6px 10px;font:inherit;cursor:pointer;box-shadow:inset 0 1px 0 rgba(255,255,255,.08);}
+.drawerFooterTools .drawerVersionBadge strong{font-size:.72rem;font-weight:1000;letter-spacing:.06em;text-transform:uppercase;line-height:1;}
+.versionUpdateDot{width:7px;height:7px;border-radius:999px;background:transparent;box-shadow:none;display:inline-block;}
+.drawerVersionBadge.updateAvailable{border-color:rgba(255,91,91,.95);color:#fff;background:rgba(76,9,16,.45);animation:updatePillPulse 1.05s ease-in-out infinite;}
+.drawerVersionBadge.updateAvailable .versionUpdateDot{background:#ff5858;box-shadow:0 0 10px rgba(255,88,88,.85);}
+@keyframes updatePillPulse{0%,100%{box-shadow:0 0 0 1px rgba(255,88,88,.12),0 0 0 rgba(255,88,88,0),inset 0 1px 0 rgba(255,255,255,.08)}50%{box-shadow:0 0 0 2px rgba(255,88,88,.48),0 0 18px rgba(255,88,88,.38),inset 0 1px 0 rgba(255,255,255,.08)}}
 .updatePage{padding-top:0;}
 .updatePage .subTop{margin-bottom:8px;}
 .updateMainBox{margin-top:0;}
@@ -749,7 +752,7 @@ body.side-swap .tableControls{right:auto!important;left:8px!important;}
 .updateFresh{color:#9ff7cf!important;font-weight:1000!important}
 .updateStale{color:#fff0a8!important;font-weight:1000!important}
 
-/* v47: make Start hole stand out from the standard gold action buttons */
+/* v48: make Start hole stand out from the standard gold action buttons */
 #startHoleBtn:not(.hidden){
   color:#03151c!important;
   background:linear-gradient(180deg,#8ff4ff 0%,#42d9f0 52%,#13a8c4 100%)!important;
@@ -766,6 +769,74 @@ body.side-swap .tableControls{right:auto!important;left:8px!important;}
   filter:saturate(.7);
 }
 
+
+
+/* v52: original version pill restored as a clickable button, with no divider line */
+.drawerFooterTools{
+  margin-top:auto!important;
+  padding-top:10px!important;
+  display:flex!important;
+  align-items:center!important;
+  justify-content:center!important;
+  border-top:0!important;
+  box-shadow:none!important;
+}
+.drawerFooterTools .drawerVersionBadge{
+  appearance:none!important;
+  -webkit-appearance:none!important;
+  margin:0!important;
+  padding:8px 2px 0!important;
+  border:0!important;
+  background:transparent!important;
+  box-shadow:none!important;
+  color:inherit!important;
+  display:flex!important;
+  align-items:center!important;
+  justify-content:center!important;
+  gap:0!important;
+  width:auto!important;
+  cursor:pointer!important;
+  position:relative!important;
+}
+.drawerFooterTools .drawerVersionBadge strong{
+  display:inline-flex!important;
+  align-items:center!important;
+  justify-content:center!important;
+  min-width:54px!important;
+  padding:4px 10px!important;
+  border-radius:999px!important;
+  background:rgba(0,0,0,.34)!important;
+  border:1px solid rgba(240,202,104,.28)!important;
+  color:var(--gold)!important;
+  font-size:.68rem!important;
+  font-weight:1000!important;
+  letter-spacing:.08em!important;
+  line-height:1!important;
+  box-shadow:0 1px 4px rgba(0,0,0,.28)!important;
+}
+.versionUpdateDot{
+  position:absolute;
+  right:-1px;
+  top:6px;
+  width:7px;
+  height:7px;
+  border-radius:999px;
+  background:transparent;
+  box-shadow:none;
+  pointer-events:none;
+}
+.drawerVersionBadge.updateAvailable strong{
+  border-color:rgba(255,91,91,.95)!important;
+  color:#fff7d2!important;
+  animation:updatePillPulse 1.05s ease-in-out infinite;
+}
+.drawerVersionBadge.updateAvailable .versionUpdateDot{
+  background:#ff5858;
+  box-shadow:0 0 10px rgba(255,88,88,.85);
+}
+@keyframes updatePillPulse{0%,100%{box-shadow:0 1px 4px rgba(0,0,0,.28),0 0 0 1px rgba(255,88,88,.10)}50%{box-shadow:0 1px 4px rgba(0,0,0,.28),0 0 0 2px rgba(255,88,88,.55),0 0 16px rgba(255,88,88,.36)}}
+
+.drawerFooterTools{border-top:0!important;box-shadow:none!important}.drawerFooterTools::before,.drawerFooterTools::after{display:none!important;content:none!important}
 </style>
 </head>
 <body class="face-light splashing" data-cardback="classic">
@@ -823,8 +894,7 @@ body.side-swap .tableControls{right:auto!important;left:8px!important;}
           <button class="drawerMenuBtn" data-page="rulesPage" type="button">Rules <small>how to play</small></button>
         </nav>
         <div class="drawerFooterTools">
-          <button class="drawerUpdateBtn" data-page="updatePage" type="button"><span>App Update</span><small>latest version</small></button>
-          <div class="drawerVersionBadge"><strong id="versionLabel">v47</strong></div>
+          <button class="drawerVersionBadge" id="versionPillBtn" data-page="updatePage" type="button" aria-label="App update and version"><strong id="versionLabel">v52</strong><span class="versionUpdateDot" aria-hidden="true"></span></button>
         </div>
       </div>
       <section class="subpage" id="scorePage"><div class="subTop"><button class="backBtn" type="button">‹</button><div class="subTitle">Scorecard</div></div><div id="scoreList"></div></section>
@@ -884,7 +954,7 @@ body.side-swap .tableControls{right:auto!important;left:8px!important;}
       </section>
 
       <section class="subpage updatePage" id="updatePage"><div class="subTop"><button class="backBtn" type="button">‹</button><div class="subTitle">App Update</div></div>
-        <div class="sectionBox updateMainBox"><h3>Current version</h3><p id="updateStatusText">Golf v47 is running.</p>
+        <div class="sectionBox updateMainBox"><h3>Current version</h3><p id="updateStatusText">Golf v52 is running.</p>
           <div class="updateBtnGrid"><button class="primaryBtn" id="checkUpdateBtn" type="button">Check for update</button><button class="primaryBtn hidden" id="forceLatestBtn" type="button">Apply update</button></div>
         </div>
       </section>
@@ -930,7 +1000,7 @@ body.side-swap .tableControls{right:auto!important;left:8px!important;}
 <script>
 (() => {
   'use strict';
-  const VERSION = 'v47.0.0';
+  const VERSION = 'v52.0.0';
   const SAVE_KEY = 'golf_pwa_v5_save';
   const PREF_KEY = 'golf_pwa_v5_prefs';
   const RANKS = ['A','2','3','4','5','6','7','8','9','10','J','Q','K'];
@@ -939,7 +1009,7 @@ body.side-swap .tableControls{right:auto!important;left:8px!important;}
   const AI_NAMES = ['Maya','Leo','Riley','Sam','Nora','Theo','Ivy','Owen','Milo','Ava','Finn','Zoe','Eli','Luna','Cole','Harper','Quinn','Rowan','Max','Nina','Caleb','Wren','Miles','Sophie','Ethan','Aria','Felix','Ruby','Logan','Piper','Grace','Mason','Chloe','Silas','Emma','Lucas','Hazel','Ben','Olive','Ezra','Clara','Noah','Tessa','Gabe','Mira'];
   const $ = id => document.getElementById(id);
   const els = {};
-  ['app','game','table','seatLayer','holeChip','modeChip','dealerChip','tieChip','drawPileBtn','discardPileBtn','deckCount','discardCount','actionBanner','sideUtilityPanel','sideScoresBtn','sideLogBtn','sideUtilityContent','tableControls','startHoleBtn','viewResultsBtn','nextFromTableBtn','skipScoreBtn','peekBtn','cancelActionBtn','scorecardBtn','cardBackBlock','cardBackToggle','drawer','drawerTab','drawerHome','drawerSub','closeDrawer','versionLabel','scoreList','logEntries','splash','startBtn','continueBtn','splashRulesBtn','setupModal','setupCloseBtn','setupAiCount','setupCards','setupHoles','setupDifficulty','setupLookRule','setupSwapToggle','setupTieToggle','cancelNewGame','confirmNewGame','drawModal','drawModalTitle','drawModalBody','drawModalClose','discardDrawnBtn','replaceDrawnBtn','peekModal','peekBody','peekCloseBtn','swapBottomBtn','peekDoneBtn','holeModal','holeModalTitle','holeModalBody','backToTableBtn','nextHoleBtn','finishToSplashBtn','toast','newGameMenuBtn','lookRuleSelect','swapKnownToggle','tieToggle','aiPaceSelect','faceSelect','cardBackGallery','cardBackSummary','customCardBack','customCardImage','customFelt','sideLayoutSelect','bottomSafeSelect','bottomUiReachSelect','bottomProbeBtn','updateStatusText','checkUpdateBtn','forceLatestBtn','clearCacheBtn','updateToast','updateToastText','updateToastNow','updateToastLater'].forEach(id => els[id] = $(id));
+  ['app','game','table','seatLayer','holeChip','modeChip','dealerChip','tieChip','drawPileBtn','discardPileBtn','deckCount','discardCount','actionBanner','sideUtilityPanel','sideScoresBtn','sideLogBtn','sideUtilityContent','tableControls','startHoleBtn','viewResultsBtn','nextFromTableBtn','skipScoreBtn','peekBtn','cancelActionBtn','scorecardBtn','cardBackBlock','cardBackToggle','drawer','drawerTab','drawerHome','drawerSub','closeDrawer','versionLabel','versionPillBtn','scoreList','logEntries','splash','startBtn','continueBtn','splashRulesBtn','setupModal','setupCloseBtn','setupAiCount','setupCards','setupHoles','setupDifficulty','setupLookRule','setupSwapToggle','setupTieToggle','cancelNewGame','confirmNewGame','drawModal','drawModalTitle','drawModalBody','drawModalClose','discardDrawnBtn','replaceDrawnBtn','peekModal','peekBody','peekCloseBtn','swapBottomBtn','peekDoneBtn','holeModal','holeModalTitle','holeModalBody','backToTableBtn','nextHoleBtn','finishToSplashBtn','toast','newGameMenuBtn','lookRuleSelect','swapKnownToggle','tieToggle','aiPaceSelect','faceSelect','cardBackGallery','cardBackSummary','customCardBack','customCardImage','customFelt','sideLayoutSelect','bottomSafeSelect','bottomUiReachSelect','bottomProbeBtn','updateStatusText','checkUpdateBtn','forceLatestBtn','clearCacheBtn','updateToast','updateToastText','updateToastNow','updateToastLater'].forEach(id => els[id] = $(id));
 
   const prefsDefault = {lookRule:'anytime', allowSwap:true, tiebreaker:true, aiPace:'normal', face:'light', cardBack:'classic', customCardBack:'#1e4e8c', customCardImage:'', felt:'#0a5a3c', feltDeep:'#084a33', bottomSafeMode:'html-body-deep', sideLayout:'default'};
   let prefs = {...prefsDefault};
@@ -952,6 +1022,9 @@ body.side-swap .tableControls{right:auto!important;left:8px!important;}
   let skipTally = false;
   let sideUtilityMode = null;
   let updateCheckTimer = null;
+  let latestRemoteVersion = '';
+  let updateIsAvailable = false;
+  let applyingUpdateNow = false;
   let lastAutoUpdateCheck = 0;
   let dismissedUpdateVersion = null;
 
@@ -1109,8 +1182,9 @@ body.side-swap .tableControls{right:auto!important;left:8px!important;}
   }
 
   function init(){
-    els.versionLabel.textContent = 'v47';
-    setUpdateStatus('Golf v47 is running.');
+    els.versionLabel.textContent = 'v52';
+    setUpdateAvailable('');
+    setUpdateStatus('Golf v52 is running.');
     loadPrefs(); bindEvents(); updateContinueButton(); render();
     wireServiceWorkerUpdates();
     startAutomaticUpdateChecks();
@@ -1128,7 +1202,7 @@ body.side-swap .tableControls{right:auto!important;left:8px!important;}
     els.splashRulesBtn.addEventListener('click', () => { document.body.classList.add('splash-rules-open'); openDrawer('rulesPage'); });
     els.closeDrawer.addEventListener('click', closeDrawer);
     els.drawerTab.addEventListener('click', ev => { if(drawerTapClickUntil && Date.now() < drawerTapClickUntil){ ev.preventDefault(); return; } toggleDrawer(); });
-    document.querySelectorAll('.drawerMenuBtn[data-page], .drawerUpdateBtn[data-page]').forEach(btn => btn.addEventListener('click', () => showDrawerPage(btn.dataset.page)));
+    document.querySelectorAll('.drawerMenuBtn[data-page], .drawerVersionBadge[data-page]').forEach(btn => btn.addEventListener('click', () => showDrawerPage(btn.dataset.page)));
     document.querySelectorAll('.backBtn').forEach(btn => btn.addEventListener('click', showDrawerHome));
     bindDrawerDrag();
     document.querySelectorAll('.settingsTabBtn').forEach(btn => btn.addEventListener('click', () => showSettingsTab(btn.dataset.settingsTab)));
@@ -2145,6 +2219,15 @@ body.side-swap .tableControls{right:auto!important;left:8px!important;}
     els.updateStatusText.classList.toggle('updateStale', kind === 'stale');
     els.forceLatestBtn?.classList.toggle('hidden', kind !== 'stale');
   }
+  function setUpdateAvailable(remote=''){
+    latestRemoteVersion = remote || '';
+    updateIsAvailable = !!remote && remote !== currentVersionText();
+    els.versionPillBtn?.classList.toggle('updateAvailable', updateIsAvailable);
+    if(els.versionPillBtn){
+      els.versionPillBtn.setAttribute('aria-label', updateIsAvailable ? `App update available: Golf v${latestRemoteVersion}` : `Golf ${currentVersionText()}. App update`);
+      els.versionPillBtn.title = updateIsAvailable ? `Update available: v${latestRemoteVersion}` : `Golf v${currentVersionText()}`;
+    }
+  }
   async function fetchRemoteVersion(){
     const res = await fetch(`./version.json?ts=${Date.now()}`, {cache:'no-store'});
     if(!res.ok) throw new Error('Version check failed');
@@ -2168,16 +2251,16 @@ body.side-swap .tableControls{right:auto!important;left:8px!important;}
     if(!auto) setUpdateStatus(`Checking for updates…`);
     lastAutoUpdateCheck = Date.now();
     try{
-      const reg = await navigator.serviceWorker?.getRegistration?.();
-      await reg?.update?.();
       const remote = await fetchRemoteVersion();
       const current = currentVersionText();
       if(remote && remote !== current){
+        setUpdateAvailable(remote);
         setUpdateStatus(`A newer version is published: v${remote}. Tap “Apply update.”`, 'stale');
         showUpdatePrompt(remote);
         if(!quiet && !auto) toast(`Update available: v${remote}`);
         return true;
       }
+      setUpdateAvailable('');
       setUpdateStatus(`Golf v${current} is current.`, 'fresh');
       els.updateToast?.classList.add('hidden');
       if(!quiet && !auto) toast('Golf is up to date.');
@@ -2195,11 +2278,13 @@ body.side-swap .tableControls{right:auto!important;left:8px!important;}
     }
   }
   async function forceLatestVersion(){
+    applyingUpdateNow = true;
     setUpdateStatus('Applying update…');
     try{
       const reg = await navigator.serviceWorker?.getRegistration?.();
-      if(reg?.waiting) reg.waiting.postMessage({type:'SKIP_WAITING'});
       await reg?.update?.();
+      const freshReg = await navigator.serviceWorker?.getRegistration?.();
+      if(freshReg?.waiting) freshReg.waiting.postMessage({type:'SKIP_WAITING'});
       await clearGolfCaches();
     } catch(err){ /* keep going; reload is still useful */ }
     const path = window.location.pathname || './';
@@ -2220,6 +2305,7 @@ body.side-swap .tableControls{right:auto!important;left:8px!important;}
     if(!('serviceWorker' in navigator)) return;
     let reloading = false;
     navigator.serviceWorker.addEventListener('controllerchange', () => {
+      if(!applyingUpdateNow) return;
       if(reloading) return;
       reloading = true;
       window.location.reload();
