@@ -414,7 +414,7 @@ body[data-safe-mode="fixed-plus-deep"] .toast{z-index:1;}
 
 
 
-/* v33: true side controls, floating utility panels, cleaned peek modal, and fuller board use */
+/* v34: center piles vertically in reclaimed board space and glow start guidance */
 .sideUtilityPanel{
   position:absolute!important;
   left:8px!important;
@@ -562,6 +562,90 @@ body[data-safe-mode="fixed-plus-deep"] .toast{z-index:1;}
 #peekModal .peekCardLabel{font-size:.62rem!important;padding:3px 8px!important;}
 #peekModal .peekRule{text-align:center!important;margin-top:8px!important;}
 
+
+
+/* v34: center the draw/discard cluster in the open table space and emphasize the start guidance */
+.centerPiles{top:49.5%!important;}
+.topHud{top:calc(49.5% - 104px)!important;}
+.tableControls:has(#startHoleBtn:not(.hidden))::before{
+  border-color:rgba(240,202,104,.58)!important;
+  background:linear-gradient(180deg,rgba(18,22,18,.86),rgba(4,8,10,.78))!important;
+  box-shadow:0 0 0 2px rgba(240,202,104,.10),0 0 18px rgba(240,202,104,.28),inset 0 1px 0 rgba(255,255,255,.10)!important;
+  animation:startHintGlow 1.55s ease-in-out infinite!important;
+}
+@keyframes startHintGlow{
+  0%,100%{filter:brightness(1);box-shadow:0 0 0 2px rgba(240,202,104,.10),0 0 15px rgba(240,202,104,.22),inset 0 1px 0 rgba(255,255,255,.10)}
+  50%{filter:brightness(1.12);box-shadow:0 0 0 2px rgba(240,202,104,.18),0 0 24px rgba(240,202,104,.44),inset 0 1px 0 rgba(255,255,255,.14)}
+}
+@media (min-height:790px){
+  .centerPiles{top:49%!important;}
+  .topHud{top:calc(49% - 108px)!important;}
+}
+@media (max-height:740px){
+  .centerPiles{top:48%!important;}
+  .topHud{top:calc(48% - 92px)!important;}
+}
+@media (max-height:650px){
+  .centerPiles{top:47%!important;}
+  .topHud{top:calc(47% - 82px)!important;}
+}
+
+
+/* v35: larger hole chip and distinct start-guidance glow */
+#holeChip{
+  font-size:.75rem!important;
+  padding:5px 12px!important;
+  line-height:1!important;
+  letter-spacing:.015em!important;
+  box-shadow:0 5px 15px rgba(0,0,0,.28),0 0 0 1px rgba(255,255,255,.18)!important;
+}
+.tableControls:has(#startHoleBtn:not(.hidden))::before{
+  color:#f8fbff!important;
+  border-color:rgba(125,245,255,.78)!important;
+  background:linear-gradient(180deg,rgba(8,28,36,.92),rgba(5,11,20,.84))!important;
+  box-shadow:0 0 0 2px rgba(125,245,255,.16),0 0 18px rgba(125,245,255,.38),0 0 30px rgba(173,98,255,.22),inset 0 1px 0 rgba(255,255,255,.12)!important;
+  animation:startHintGlowCyan 1.55s ease-in-out infinite!important;
+}
+@keyframes startHintGlowCyan{
+  0%,100%{filter:brightness(1);box-shadow:0 0 0 2px rgba(125,245,255,.14),0 0 14px rgba(125,245,255,.34),0 0 24px rgba(173,98,255,.18),inset 0 1px 0 rgba(255,255,255,.12)}
+  50%{filter:brightness(1.15);box-shadow:0 0 0 2px rgba(125,245,255,.28),0 0 26px rgba(125,245,255,.62),0 0 38px rgba(173,98,255,.38),inset 0 1px 0 rgba(255,255,255,.16)}
+}
+@media (max-height:740px){
+  #holeChip{font-size:.68rem!important;padding:4px 10px!important;}
+}
+@media (max-height:650px){
+  #holeChip{font-size:.63rem!important;padding:3px 9px!important;}
+}
+
+
+/* v37: fixed photo card-back upload/apply behavior */
+.holeScoreTag.tallyPlaceholder{visibility:hidden!important;}
+.seat.human,.seat.human.six{--seat-card-w:clamp(39px,10.8vw,52px)!important;}
+.seat.human .seatGrid{gap:6px!important;padding:6px!important;}
+@media (min-height:790px){.seat.human,.seat.human.six{--seat-card-w:clamp(41px,11.3vw,54px)!important;}}
+@media (max-height:740px){.seat.human,.seat.human.six{--seat-card-w:clamp(34px,9.5vw,44px)!important;}}
+@media (max-height:650px){.seat.human,.seat.human.six{--seat-card-w:clamp(30px,8.5vw,39px)!important;}}
+body[data-cardback="custom-image"] .backCard{
+  background-color:#111;
+  background-image:var(--custom-card-image),linear-gradient(180deg,#222,#111)!important;
+  background-size:cover!important;
+  background-position:center!important;
+  background-repeat:no-repeat!important;
+}
+body[data-cardback="custom-image"] .backCard::after{
+  inset:5px;
+  border-color:rgba(255,255,255,.30);
+  box-shadow:inset 0 0 0 1px rgba(0,0,0,.18);
+}
+.cardBackThumb[data-style="custom-image"]{
+  background-color:#111;
+  background-image:var(--custom-card-image),linear-gradient(180deg,#222,#111)!important;
+  background-size:cover!important;
+  background-position:center!important;
+}
+.cardBackImageRow input[type="file"]{max-width:58%;font-size:.62rem;}
+.cardBackImageHint{font-size:.66rem;color:var(--muted);line-height:1.2;margin:3px 0 0;text-align:right;max-width:58%;}
+
 </style>
 </head>
 <body class="face-light splashing" data-cardback="classic">
@@ -651,8 +735,10 @@ body[data-safe-mode="fixed-plus-deep"] .toast{z-index:1;}
               <button class="cardBackOption" type="button" data-backstyle="mix-green-black"><div class="cardBackThumb" data-style="mix-green-black"></div><span>Green/Black</span></button>
               <button class="cardBackOption" type="button" data-backstyle="mix-green-blue"><div class="cardBackThumb" data-style="mix-green-blue"></div><span>Green/Blue</span></button>
               <button class="cardBackOption" type="button" data-backstyle="custom-solid"><div class="cardBackThumb" data-style="custom-solid"></div><span>Custom</span></button>
+              <button class="cardBackOption" type="button" data-backstyle="custom-image"><div class="cardBackThumb" data-style="custom-image"></div><span>Photo</span></button>
             </div></div>
             <div class="controlRow cardBackCustomRow"><label for="customCardBack">Custom back</label><input id="customCardBack" type="color" value="#1e4e8c" /></div>
+            <div class="controlRow cardBackImageRow"><label for="customCardImage">Photo back</label><input id="customCardImage" type="file" accept="image/*" /></div>
           </div>
           <div class="sectionBox"><h3>Table felt</h3>
             <div class="controlRow"><span class="controlLabel">Preset</span><div class="feltPresetGrid">
@@ -710,7 +796,7 @@ body[data-safe-mode="fixed-plus-deep"] .toast{z-index:1;}
 <script>
 (() => {
   'use strict';
-  const VERSION = 'v33.0.0';
+  const VERSION = 'v37.0.0';
   const SAVE_KEY = 'golf_pwa_v5_save';
   const PREF_KEY = 'golf_pwa_v5_prefs';
   const RANKS = ['A','2','3','4','5','6','7','8','9','10','J','Q','K'];
@@ -719,9 +805,9 @@ body[data-safe-mode="fixed-plus-deep"] .toast{z-index:1;}
   const AI_NAMES = ['Maya','Leo','Riley','Sam','Nora','Theo','Ivy','Owen','Milo','Ava','Finn','Zoe','Eli','Luna','Cole','Harper','Quinn','Rowan','Max','Nina','Caleb','Wren','Miles','Sophie','Ethan','Aria','Felix','Ruby','Logan','Piper','Grace','Mason','Chloe','Silas','Emma','Lucas','Hazel','Ben','Olive','Ezra','Clara','Noah','Tessa','Gabe','Mira'];
   const $ = id => document.getElementById(id);
   const els = {};
-  ['app','game','table','seatLayer','holeChip','modeChip','dealerChip','tieChip','drawPileBtn','discardPileBtn','deckCount','discardCount','actionBanner','sideUtilityPanel','sideScoresBtn','sideLogBtn','sideUtilityContent','tableControls','startHoleBtn','viewResultsBtn','nextFromTableBtn','skipScoreBtn','peekBtn','cancelActionBtn','scorecardBtn','cardBackBlock','cardBackToggle','drawer','drawerTab','drawerHome','drawerSub','closeDrawer','versionLabel','scoreList','logEntries','splash','startBtn','continueBtn','splashRulesBtn','setupModal','setupCloseBtn','setupAiCount','setupCards','setupHoles','setupDifficulty','setupLookRule','setupSwapToggle','setupTieToggle','cancelNewGame','confirmNewGame','drawModal','drawModalTitle','drawModalBody','drawModalClose','discardDrawnBtn','replaceDrawnBtn','peekModal','peekBody','peekCloseBtn','swapBottomBtn','peekDoneBtn','holeModal','holeModalTitle','holeModalBody','backToTableBtn','nextHoleBtn','finishToSplashBtn','toast','newGameMenuBtn','lookRuleSelect','swapKnownToggle','tieToggle','aiPaceSelect','faceSelect','cardBackGallery','cardBackSummary','customCardBack','customFelt','bottomSafeSelect','bottomUiReachSelect','bottomProbeBtn'].forEach(id => els[id] = $(id));
+  ['app','game','table','seatLayer','holeChip','modeChip','dealerChip','tieChip','drawPileBtn','discardPileBtn','deckCount','discardCount','actionBanner','sideUtilityPanel','sideScoresBtn','sideLogBtn','sideUtilityContent','tableControls','startHoleBtn','viewResultsBtn','nextFromTableBtn','skipScoreBtn','peekBtn','cancelActionBtn','scorecardBtn','cardBackBlock','cardBackToggle','drawer','drawerTab','drawerHome','drawerSub','closeDrawer','versionLabel','scoreList','logEntries','splash','startBtn','continueBtn','splashRulesBtn','setupModal','setupCloseBtn','setupAiCount','setupCards','setupHoles','setupDifficulty','setupLookRule','setupSwapToggle','setupTieToggle','cancelNewGame','confirmNewGame','drawModal','drawModalTitle','drawModalBody','drawModalClose','discardDrawnBtn','replaceDrawnBtn','peekModal','peekBody','peekCloseBtn','swapBottomBtn','peekDoneBtn','holeModal','holeModalTitle','holeModalBody','backToTableBtn','nextHoleBtn','finishToSplashBtn','toast','newGameMenuBtn','lookRuleSelect','swapKnownToggle','tieToggle','aiPaceSelect','faceSelect','cardBackGallery','cardBackSummary','customCardBack','customCardImage','customFelt','bottomSafeSelect','bottomUiReachSelect','bottomProbeBtn'].forEach(id => els[id] = $(id));
 
-  const prefsDefault = {lookRule:'anytime', allowSwap:true, tiebreaker:true, aiPace:'normal', face:'light', cardBack:'classic', customCardBack:'#1e4e8c', felt:'#0a5a3c', feltDeep:'#084a33', bottomSafeMode:'html-body-deep'};
+  const prefsDefault = {lookRule:'anytime', allowSwap:true, tiebreaker:true, aiPace:'normal', face:'light', cardBack:'classic', customCardBack:'#1e4e8c', customCardImage:'', felt:'#0a5a3c', feltDeep:'#084a33', bottomSafeMode:'html-body-deep'};
   let prefs = {...prefsDefault};
   let state = emptyState();
   let drawerDrag = null;
@@ -756,6 +842,7 @@ body[data-safe-mode="fixed-plus-deep"] .toast{z-index:1;}
     document.body.classList.toggle('face-light', prefs.face !== 'dark');
     setCardBack(prefs.cardBack || 'classic', false);
     document.documentElement.style.setProperty('--custom-card-back', prefs.customCardBack || '#1e4e8c');
+    document.documentElement.style.setProperty('--custom-card-image', prefs.customCardImage ? `url("${prefs.customCardImage}")` : 'linear-gradient(180deg,#222,#111)');
     setFelt(prefs.felt || '#0a5a3c', prefs.feltDeep || makeDarkerColor(prefs.felt || '#0a5a3c'), false);
     applyBottomSafeMode();
     if(els.bottomSafeSelect) els.bottomSafeSelect.value = prefs.bottomSafeMode || 'html-body-deep';
@@ -810,13 +897,13 @@ body[data-safe-mode="fixed-plus-deep"] .toast{z-index:1;}
   }
   function setToggle(el, on){ if(!el) return; el.classList.toggle('on', !!on); el.setAttribute('aria-pressed', on ? 'true' : 'false'); }
   function setCardBack(style, persist=true){
-    const allowed = new Set(['classic','blueflame','wave','solid-blue','solid-red','solid-black','solid-green','mix-red-blue','mix-blue-black','mix-red-black','mix-red-green','mix-green-black','mix-green-blue','custom-solid']);
+    const allowed = new Set(['classic','blueflame','wave','solid-blue','solid-red','solid-black','solid-green','mix-red-blue','mix-blue-black','mix-red-black','mix-red-green','mix-green-black','mix-green-blue','custom-solid','custom-image']);
     prefs.cardBack = allowed.has(style) ? style : 'classic';
     document.body.dataset.cardback = prefs.cardBack;
     syncCardBackGallery();
     if(persist) savePrefs();
   }
-  function cardBackLabel(style){ return ({classic:'Classic', blueflame:'Blue Flame', wave:'Wave', 'solid-blue':'Blue', 'solid-red':'Red', 'solid-black':'Black', 'solid-green':'Green', 'mix-red-blue':'Red/Blue', 'mix-blue-black':'Blue/Black', 'mix-red-black':'Red/Black', 'mix-red-green':'Red/Green', 'mix-green-black':'Green/Black', 'mix-green-blue':'Green/Blue', 'custom-solid':'Custom'}[style] || 'Classic'); }
+  function cardBackLabel(style){ return ({classic:'Classic', blueflame:'Blue Flame', wave:'Wave', 'solid-blue':'Blue', 'solid-red':'Red', 'solid-black':'Black', 'solid-green':'Green', 'mix-red-blue':'Red/Blue', 'mix-blue-black':'Blue/Black', 'mix-red-black':'Red/Black', 'mix-red-green':'Red/Green', 'mix-green-black':'Green/Black', 'mix-green-blue':'Green/Blue', 'custom-solid':'Custom', 'custom-image':'Photo'}[style] || 'Classic'); }
   function syncCardBackGallery(){
     document.querySelectorAll('[data-backstyle]').forEach(btn => btn.classList.toggle('active', btn.dataset.backstyle === prefs.cardBack));
     if(els.cardBackSummary) els.cardBackSummary.textContent = cardBackLabel(prefs.cardBack);
@@ -829,8 +916,60 @@ body[data-safe-mode="fixed-plus-deep"] .toast{z-index:1;}
   }
   function togglePref(key, el){ prefs[key] = !prefs[key]; setToggle(el, prefs[key]); savePrefs(); }
 
+  function handleCustomCardImage(ev){
+    const file = ev?.target?.files?.[0];
+    if(!file) return;
+    if(!file.type || !file.type.startsWith('image/')){
+      toast('Choose an image file.');
+      ev.target.value = '';
+      return;
+    }
+    const reader = new FileReader();
+    reader.onerror = () => toast('Could not read that image.');
+    reader.onload = () => compressCustomCardImage(reader.result)
+      .then(dataUrl => {
+        prefs.customCardImage = dataUrl;
+        document.documentElement.style.setProperty('--custom-card-image', `url("${dataUrl}")`);
+        setCardBack('custom-image', false);
+        applyPrefs();
+        savePrefs();
+        render();
+        toast('Photo card back applied.');
+      })
+      .catch(() => toast('Could not use that image.'));
+    reader.readAsDataURL(file);
+  }
+
+  function compressCustomCardImage(src){
+    return new Promise((resolve, reject) => {
+      const img = new Image();
+      img.onload = () => {
+        try{
+          const w = 300;
+          const h = 420;
+          const canvas = document.createElement('canvas');
+          canvas.width = w;
+          canvas.height = h;
+          const ctx = canvas.getContext('2d');
+          if(!ctx) throw new Error('No canvas context');
+          ctx.fillStyle = '#111';
+          ctx.fillRect(0, 0, w, h);
+          const scale = Math.max(w / img.naturalWidth, h / img.naturalHeight);
+          const sw = w / scale;
+          const sh = h / scale;
+          const sx = (img.naturalWidth - sw) / 2;
+          const sy = (img.naturalHeight - sh) / 2;
+          ctx.drawImage(img, sx, sy, sw, sh, 0, 0, w, h);
+          resolve(canvas.toDataURL('image/jpeg', 0.82));
+        } catch(err){ reject(err); }
+      };
+      img.onerror = reject;
+      img.src = src;
+    });
+  }
+
   function init(){
-    els.versionLabel.textContent = 'v33';
+    els.versionLabel.textContent = 'v37';
     loadPrefs(); bindEvents(); updateContinueButton(); render();
     window.addEventListener('resize', () => requestAnimationFrame(adjustBottomLayout));
     window.visualViewport?.addEventListener('resize', () => requestAnimationFrame(adjustBottomLayout));
@@ -882,6 +1021,7 @@ body[data-safe-mode="fixed-plus-deep"] .toast{z-index:1;}
     document.querySelectorAll('[data-backstyle]').forEach(btn => btn.addEventListener('click', () => { setCardBack(btn.dataset.backstyle); render(); }));
     els.cardBackToggle.addEventListener('click', () => toggleCardBackBlock());
     els.customCardBack.addEventListener('input', () => { prefs.customCardBack = els.customCardBack.value; setCardBack('custom-solid', false); applyPrefs(); savePrefs(); render(); });
+    els.customCardImage?.addEventListener('change', handleCustomCardImage);
     els.customFelt.addEventListener('input', () => setFelt(els.customFelt.value, makeDarkerColor(els.customFelt.value)));
     document.querySelectorAll('[data-felt]').forEach(btn => btn.addEventListener('click', () => { setFelt(btn.dataset.felt, btn.dataset.feltDeep || makeDarkerColor(btn.dataset.felt)); els.customFelt.value = prefs.felt; }));
   }
@@ -1109,7 +1249,7 @@ body[data-safe-mode="fixed-plus-deep"] .toast{z-index:1;}
         }
         return `<div class="slot miniSlot${faceDown}" data-player-id="${p.id}" data-slot="${idx}">${contents}</div>`;
       }).join('');
-      return `<div class="seat ${gridClass} ${p.human?'human':''} ${(!p.human && pos.top > 45)?'lowerLane':''} ${i===state.turnIndex && state.holeStarted && !state.review?'current':''} ${i===state.dealerIndex?'dealer':''} ${reviewRow?'reviewed':''} ${state.review?.tallying && state.review?.activePlayerId===p.id?'tallying':''}" data-player-id="${p.id}" style="left:${pos.left}%;top:${pos.top}%"><div class="seatName">${escapeHtml(playerName(p))}</div><div class="seatMeta"><span class="scorePill" data-score-player="${p.id}">${p.total}</span><span class="turnPill">${p.turns}/${state.cardCount}</span></div><div class="seatGrid ${gridClass}${selectable && p.human ? ' selecting' : ''}">${slots}</div>${reviewRow && !state.review?.tallying ? `<div class="holeScoreTag"><b>Hole ${reviewRow.score}</b><span>Total ${reviewRow.total}</span></div>` : ''}</div>`;
+      return `<div class="seat ${gridClass} ${p.human?'human':''} ${(!p.human && pos.top > 45)?'lowerLane':''} ${i===state.turnIndex && state.holeStarted && !state.review?'current':''} ${i===state.dealerIndex?'dealer':''} ${reviewRow?'reviewed':''} ${state.review?.tallying && state.review?.activePlayerId===p.id?'tallying':''}" data-player-id="${p.id}" style="left:${pos.left}%;top:${pos.top}%"><div class="seatName">${escapeHtml(playerName(p))}</div><div class="seatMeta"><span class="scorePill" data-score-player="${p.id}">${p.total}</span><span class="turnPill">${p.turns}/${state.cardCount}</span></div><div class="seatGrid ${gridClass}${selectable && p.human ? ' selecting' : ''}">${slots}</div>${reviewRow ? `<div class="holeScoreTag ${state.review?.tallying ? 'tallyPlaceholder' : ''}"><b>Hole ${reviewRow.score}</b><span>Total ${reviewRow.total}</span></div>` : ''}</div>`;
     }).join('');
     els.seatLayer.querySelectorAll('.seat.human [data-slot]').forEach(btn => btn.addEventListener('click', () => selectHumanSlot(Number(btn.dataset.slot))));
   }
