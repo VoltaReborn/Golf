@@ -971,7 +971,7 @@ body.side-swap .tableControls{right:auto!important;left:8px!important;}
 
 
 
-/* v66: dealer-only edge pill nudge */
+/* v67: dealer-only edge pill nudge */
 .updateToast{
   top:auto!important;
   bottom:calc(12px + var(--safe-bottom))!important;
@@ -996,7 +996,7 @@ body.side-swap .tableControls{right:auto!important;left:8px!important;}
   flex:0 0 auto!important;
   padding-bottom:calc(10px + var(--safe-bottom))!important;
 }
-/* v66: keep edge player cards centered; only nudge/shrink pill when edge player is dealer */
+/* v67: keep edge player cards centered; only nudge/shrink pill when edge player is dealer */
 .seat.edgeRight{transform:translate(-50%,-50%)!important;}
 .seat.edgeLeft{transform:translate(-50%,-50%)!important;}
 .seat.edgeRight:not(.dealer) .seatName,.seat.edgeLeft:not(.dealer) .seatName{transform:none!important;max-width:150px!important;}
@@ -1011,6 +1011,59 @@ body.side-swap .tableControls{right:auto!important;left:8px!important;}
 .drawerInlineUpdate{flex:0 0 auto!important;margin-top:0!important;}
 .drawerFooterTools{flex:0 0 auto!important;margin-top:0!important;justify-content:center!important;padding-bottom:calc(10px + var(--safe-bottom))!important;}
 .drawerInlineUpdate.collapsed + .drawerFooterTools{margin-top:0!important;}
+
+
+/* v67: pin main-drawer version pill to the true bottom of the visible drawer in iOS PWA */
+.drawerContent{
+  position:relative!important;
+  overflow-y:auto!important;
+  padding-bottom:0!important;
+}
+.drawerHome:not(.hidden){
+  position:relative!important;
+  min-height:100%!important;
+  height:100%!important;
+  padding-bottom:calc(52px + var(--safe-bottom))!important;
+  box-sizing:border-box!important;
+}
+.drawerHome:not(.hidden) nav{
+  flex:0 0 auto!important;
+  padding-bottom:8px!important;
+}
+.drawerHome:not(.hidden) .drawerInlineUpdate{
+  position:absolute!important;
+  left:0!important;
+  right:0!important;
+  bottom:calc(50px + var(--safe-bottom))!important;
+  margin:0!important;
+  padding:0!important;
+  z-index:2!important;
+}
+.drawerHome:not(.hidden) .drawerInlineUpdate.collapsed{
+  display:none!important;
+}
+.drawerHome:not(.hidden) .drawerFooterTools{
+  position:absolute!important;
+  left:0!important;
+  right:0!important;
+  bottom:calc(8px + var(--safe-bottom))!important;
+  margin:0!important;
+  padding:0!important;
+  display:flex!important;
+  align-items:center!important;
+  justify-content:center!important;
+  z-index:3!important;
+  border-top:0!important;
+  box-shadow:none!important;
+}
+.drawerHome:not(.hidden) .drawerFooterTools::before,
+.drawerHome:not(.hidden) .drawerFooterTools::after{
+  content:none!important;
+  display:none!important;
+}
+@supports (height:100dvh){
+  .drawer{height:100dvh!important;}
+}
 
 </style>
 </head>
@@ -1070,12 +1123,12 @@ body.side-swap .tableControls{right:auto!important;left:8px!important;}
           <button class="drawerMenuBtn" data-page="rulesPage" type="button">Rules <small>how to play</small></button>
         </nav>
         <div class="drawerInlineUpdate collapsed" id="drawerInlineUpdate" aria-live="polite">
-          <div class="sectionBox updateMainBox"><h3>App update</h3><p id="updateStatusText">Golf v66 is running.</p>
+          <div class="sectionBox updateMainBox"><h3>App update</h3><p id="updateStatusText">Golf v67 is running.</p>
             <div class="updateBtnGrid"><button class="primaryBtn" id="checkUpdateBtn" type="button">Check for update</button><button class="primaryBtn hidden" id="forceLatestBtn" type="button">Apply update</button></div>
           </div>
         </div>
         <div class="drawerFooterTools">
-          <button class="drawerVersionBadge" id="versionPillBtn" type="button" aria-label="App update and version"><strong id="versionLabel">v66</strong><span class="versionUpdateDot" aria-hidden="true"></span></button>
+          <button class="drawerVersionBadge" id="versionPillBtn" type="button" aria-label="App update and version"><strong id="versionLabel">v67</strong><span class="versionUpdateDot" aria-hidden="true"></span></button>
         </div>
       </div>
       <section class="subpage" id="scorePage"><div class="subTop"><button class="backBtn" type="button">‹</button><div class="subTitle">Scorecard</div></div><div id="scoreList"></div></section>
@@ -1176,7 +1229,7 @@ body.side-swap .tableControls{right:auto!important;left:8px!important;}
 <script>
 (() => {
   'use strict';
-  const VERSION = 'v66.0.0';
+  const VERSION = 'v67.0.0';
   const SAVE_KEY = 'golf_pwa_v5_save';
   const PREF_KEY = 'golf_pwa_v5_prefs';
   const RANKS = ['A','2','3','4','5','6','7','8','9','10','J','Q','K'];
@@ -1361,9 +1414,9 @@ body.side-swap .tableControls{right:auto!important;left:8px!important;}
   }
 
   function init(){
-    els.versionLabel.textContent = 'v66';
+    els.versionLabel.textContent = 'v67';
     setUpdateAvailable('');
-    setUpdateStatus('Golf v66 is running.');
+    setUpdateStatus('Golf v67 is running.');
     loadPrefs(); bindEvents(); updateContinueButton(); render();
     wireServiceWorkerUpdates();
     startAutomaticUpdateChecks();
