@@ -719,6 +719,12 @@ body.side-swap .tableControls{right:auto!important;left:8px!important;}
 body.side-swap .tableControls{right:auto!important;left:8px!important;}
 @media (max-height:740px){body.side-swap .tableControls{left:6px!important;}}
 
+
+/* v43: app update controls */
+.updateBtnGrid{display:grid;grid-template-columns:1fr;gap:7px;margin-top:9px}
+.updateBtnGrid .primaryBtn,.updateBtnGrid .ghostBtn,#clearCacheBtn{width:100%;min-height:40px}
+.updateFresh{color:#9ff7cf!important;font-weight:1000!important}
+.updateStale{color:#fff0a8!important;font-weight:1000!important}
 </style>
 </head>
 <body class="face-light splashing" data-cardback="classic">
@@ -772,10 +778,11 @@ body.side-swap .tableControls{right:auto!important;left:8px!important;}
           <button class="drawerMenuBtn" data-page="scorePage" type="button">Scorecard <small>holes + totals</small></button>
           <button class="drawerMenuBtn" data-page="logPage" type="button">Log <small>latest actions</small></button>
           <button class="drawerMenuBtn" data-page="settingsPage" type="button">Settings <small>gameplay + appearance</small></button>
+          <button class="drawerMenuBtn" data-page="updatePage" type="button">App Update <small>latest version</small></button>
           <button class="drawerMenuBtn" id="newGameMenuBtn" type="button">Start New Game <small>fresh course</small></button>
           <button class="drawerMenuBtn" data-page="rulesPage" type="button">Rules <small>how to play</small></button>
         </nav>
-        <div class="drawerVersionBadge"><strong id="versionLabel">v42</strong></div>
+        <div class="drawerVersionBadge"><strong id="versionLabel">v43</strong></div>
       </div>
       <section class="subpage" id="scorePage"><div class="subTop"><button class="backBtn" type="button">‹</button><div class="subTitle">Scorecard</div></div><div id="scoreList"></div></section>
       <section class="subpage" id="logPage"><div class="subTop"><button class="backBtn" type="button">‹</button><div class="subTitle">Log</div></div><div id="logEntries"></div></section>
@@ -832,6 +839,14 @@ body.side-swap .tableControls{right:auto!important;left:8px!important;}
           </div>
         </div>
       </section>
+
+      <section class="subpage" id="updatePage"><div class="subTop"><button class="backBtn" type="button">‹</button><div class="subTitle">App Update</div></div>
+        <div class="sectionBox"><h3>Current version</h3><p id="updateStatusText">Golf v43 is running.</p>
+          <div class="updateBtnGrid"><button class="primaryBtn" id="checkUpdateBtn" type="button">Check for update</button><button class="ghostBtn" id="forceLatestBtn" type="button">Force latest version</button></div>
+          <p class="smallHelp">Use this after publishing a new GitHub update if the installed PWA keeps showing an old version.</p>
+        </div>
+        <div class="sectionBox"><h3>Cache reset</h3><p class="smallHelp">This clears Golf's service-worker caches, asks the browser for the newest files, then reloads the app.</p><button class="ghostBtn" id="clearCacheBtn" type="button">Clear app cache + reload</button></div>
+      </section>
       <section class="subpage" id="rulesPage"><div class="subTop"><button class="backBtn" type="button">‹</button><div class="subTitle">Rules</div></div>
         <div class="sectionBox"><h3>Goal</h3><p>Finish 9 or 18 holes with the lowest total score.</p></div>
         <div class="sectionBox"><h3>Setup</h3><p>Each player gets either 4 cards in a 2x2 grid or 6 cards in a 3x2 grid. All cards start face down. You may look at the bottom two cards based on the selected look rule.</p></div>
@@ -873,7 +888,7 @@ body.side-swap .tableControls{right:auto!important;left:8px!important;}
 <script>
 (() => {
   'use strict';
-  const VERSION = 'v42.0.0';
+  const VERSION = 'v43.0.0';
   const SAVE_KEY = 'golf_pwa_v5_save';
   const PREF_KEY = 'golf_pwa_v5_prefs';
   const RANKS = ['A','2','3','4','5','6','7','8','9','10','J','Q','K'];
@@ -882,7 +897,7 @@ body.side-swap .tableControls{right:auto!important;left:8px!important;}
   const AI_NAMES = ['Maya','Leo','Riley','Sam','Nora','Theo','Ivy','Owen','Milo','Ava','Finn','Zoe','Eli','Luna','Cole','Harper','Quinn','Rowan','Max','Nina','Caleb','Wren','Miles','Sophie','Ethan','Aria','Felix','Ruby','Logan','Piper','Grace','Mason','Chloe','Silas','Emma','Lucas','Hazel','Ben','Olive','Ezra','Clara','Noah','Tessa','Gabe','Mira'];
   const $ = id => document.getElementById(id);
   const els = {};
-  ['app','game','table','seatLayer','holeChip','modeChip','dealerChip','tieChip','drawPileBtn','discardPileBtn','deckCount','discardCount','actionBanner','sideUtilityPanel','sideScoresBtn','sideLogBtn','sideUtilityContent','tableControls','startHoleBtn','viewResultsBtn','nextFromTableBtn','skipScoreBtn','peekBtn','cancelActionBtn','scorecardBtn','cardBackBlock','cardBackToggle','drawer','drawerTab','drawerHome','drawerSub','closeDrawer','versionLabel','scoreList','logEntries','splash','startBtn','continueBtn','splashRulesBtn','setupModal','setupCloseBtn','setupAiCount','setupCards','setupHoles','setupDifficulty','setupLookRule','setupSwapToggle','setupTieToggle','cancelNewGame','confirmNewGame','drawModal','drawModalTitle','drawModalBody','drawModalClose','discardDrawnBtn','replaceDrawnBtn','peekModal','peekBody','peekCloseBtn','swapBottomBtn','peekDoneBtn','holeModal','holeModalTitle','holeModalBody','backToTableBtn','nextHoleBtn','finishToSplashBtn','toast','newGameMenuBtn','lookRuleSelect','swapKnownToggle','tieToggle','aiPaceSelect','faceSelect','cardBackGallery','cardBackSummary','customCardBack','customCardImage','customFelt','sideLayoutSelect','bottomSafeSelect','bottomUiReachSelect','bottomProbeBtn'].forEach(id => els[id] = $(id));
+  ['app','game','table','seatLayer','holeChip','modeChip','dealerChip','tieChip','drawPileBtn','discardPileBtn','deckCount','discardCount','actionBanner','sideUtilityPanel','sideScoresBtn','sideLogBtn','sideUtilityContent','tableControls','startHoleBtn','viewResultsBtn','nextFromTableBtn','skipScoreBtn','peekBtn','cancelActionBtn','scorecardBtn','cardBackBlock','cardBackToggle','drawer','drawerTab','drawerHome','drawerSub','closeDrawer','versionLabel','scoreList','logEntries','splash','startBtn','continueBtn','splashRulesBtn','setupModal','setupCloseBtn','setupAiCount','setupCards','setupHoles','setupDifficulty','setupLookRule','setupSwapToggle','setupTieToggle','cancelNewGame','confirmNewGame','drawModal','drawModalTitle','drawModalBody','drawModalClose','discardDrawnBtn','replaceDrawnBtn','peekModal','peekBody','peekCloseBtn','swapBottomBtn','peekDoneBtn','holeModal','holeModalTitle','holeModalBody','backToTableBtn','nextHoleBtn','finishToSplashBtn','toast','newGameMenuBtn','lookRuleSelect','swapKnownToggle','tieToggle','aiPaceSelect','faceSelect','cardBackGallery','cardBackSummary','customCardBack','customCardImage','customFelt','sideLayoutSelect','bottomSafeSelect','bottomUiReachSelect','bottomProbeBtn','updateStatusText','checkUpdateBtn','forceLatestBtn','clearCacheBtn'].forEach(id => els[id] = $(id));
 
   const prefsDefault = {lookRule:'anytime', allowSwap:true, tiebreaker:true, aiPace:'normal', face:'light', cardBack:'classic', customCardBack:'#1e4e8c', customCardImage:'', felt:'#0a5a3c', feltDeep:'#084a33', bottomSafeMode:'html-body-deep', sideLayout:'default'};
   let prefs = {...prefsDefault};
@@ -1049,8 +1064,10 @@ body.side-swap .tableControls{right:auto!important;left:8px!important;}
   }
 
   function init(){
-    els.versionLabel.textContent = 'v42';
+    els.versionLabel.textContent = 'v43';
+    setUpdateStatus('Golf v43 is running.');
     loadPrefs(); bindEvents(); updateContinueButton(); render();
+    wireServiceWorkerUpdates();
     window.addEventListener('resize', () => requestAnimationFrame(adjustBottomLayout));
     window.visualViewport?.addEventListener('resize', () => requestAnimationFrame(adjustBottomLayout));
     window.visualViewport?.addEventListener('scroll', () => requestAnimationFrame(adjustBottomLayout));
@@ -1104,6 +1121,9 @@ body.side-swap .tableControls{right:auto!important;left:8px!important;}
     els.customCardBack.addEventListener('input', () => { prefs.customCardBack = els.customCardBack.value; setCardBack('custom-solid', false); applyPrefs(); savePrefs(); render(); });
     els.customCardImage?.addEventListener('change', handleCustomCardImage);
     els.customFelt.addEventListener('input', () => setFelt(els.customFelt.value, makeDarkerColor(els.customFelt.value)));
+    els.checkUpdateBtn?.addEventListener('click', () => checkForUpdate());
+    els.forceLatestBtn?.addEventListener('click', forceLatestVersion);
+    els.clearCacheBtn?.addEventListener('click', forceLatestVersion);
     document.querySelectorAll('[data-felt]').forEach(btn => btn.addEventListener('click', () => { setFelt(btn.dataset.felt, btn.dataset.feltDeep || makeDarkerColor(btn.dataset.felt)); els.customFelt.value = prefs.felt; }));
   }
   function bindDrawerDrag(){
@@ -2068,6 +2088,83 @@ body.side-swap .tableControls{right:auto!important;left:8px!important;}
   }
   function pointValue(card){ if(card.rank === 'Joker') return 0; if(card.rank === 'K') return 0; if(card.rank === 'A') return 1; if(card.rank === 'J' || card.rank === 'Q') return 10; return Number(card.rank); }
 
+
+  function normalizeVersion(v){ return String(v || '').trim().replace(/^v/i,'').split(/[+\s]/)[0]; }
+  function currentVersionText(){ return normalizeVersion(VERSION); }
+  function setUpdateStatus(msg, kind=''){
+    if(!els.updateStatusText) return;
+    els.updateStatusText.textContent = msg;
+    els.updateStatusText.classList.toggle('updateFresh', kind === 'fresh');
+    els.updateStatusText.classList.toggle('updateStale', kind === 'stale');
+  }
+  async function fetchRemoteVersion(){
+    const res = await fetch(`./version.json?ts=${Date.now()}`, {cache:'no-store'});
+    if(!res.ok) throw new Error('Version check failed');
+    const data = await res.json();
+    return normalizeVersion(data.version || data.appVersion || data.build);
+  }
+  async function checkForUpdate({quiet=false}={}){
+    setUpdateStatus(`Checking for updates…`);
+    try{
+      const reg = await navigator.serviceWorker?.getRegistration?.();
+      await reg?.update?.();
+      const remote = await fetchRemoteVersion();
+      const current = currentVersionText();
+      if(remote && remote !== current){
+        setUpdateStatus(`A newer version is published: v${remote}. Tap “Force latest version.”`, 'stale');
+        if(!quiet) toast(`Update available: v${remote}`);
+        return true;
+      }
+      setUpdateStatus(`Golf v${current} is current.`, 'fresh');
+      if(!quiet) toast('Golf is up to date.');
+      return false;
+    } catch(err){
+      setUpdateStatus('Could not check for updates. Try Force latest version after GitHub finishes deploying.');
+      if(!quiet) toast('Update check failed.');
+      return false;
+    }
+  }
+  async function clearGolfCaches(){
+    if('caches' in window){
+      const keys = await caches.keys();
+      await Promise.all(keys.filter(key => key.startsWith('golf-pwa-')).map(key => caches.delete(key)));
+    }
+  }
+  async function forceLatestVersion(){
+    setUpdateStatus('Clearing cache and requesting latest version…');
+    try{
+      const reg = await navigator.serviceWorker?.getRegistration?.();
+      if(reg?.waiting) reg.waiting.postMessage({type:'SKIP_WAITING'});
+      await reg?.update?.();
+      await clearGolfCaches();
+    } catch(err){ /* keep going; reload is still useful */ }
+    const path = window.location.pathname || './';
+    window.location.replace(`${path}?refresh=${Date.now()}`);
+  }
+  function wireServiceWorkerUpdates(){
+    if(!('serviceWorker' in navigator)) return;
+    let reloading = false;
+    navigator.serviceWorker.addEventListener('controllerchange', () => {
+      if(reloading) return;
+      reloading = true;
+      window.location.reload();
+    });
+    navigator.serviceWorker.getRegistration?.().then(reg => {
+      if(!reg) return;
+      if(reg.waiting) setUpdateStatus('A downloaded update is waiting. Tap “Force latest version.”', 'stale');
+      reg.addEventListener('updatefound', () => {
+        const worker = reg.installing;
+        if(!worker) return;
+        worker.addEventListener('statechange', () => {
+          if(worker.state === 'installed' && navigator.serviceWorker.controller){
+            setUpdateStatus('A new version is ready. Tap “Force latest version.”', 'stale');
+            toast('Update ready in App Update.');
+          }
+        });
+      });
+    }).catch(()=>{});
+  }
+
   function renderScores(){
     if(!els.scoreList) return;
     if(!state.active && !state.players.length){ els.scoreList.innerHTML = '<div class="sectionBox"><p>No scorecard yet.</p></div>'; return; }
@@ -2095,7 +2192,10 @@ body.side-swap .tableControls{right:auto!important;left:8px!important;}
 (() => {
   if ('serviceWorker' in navigator) {
     window.addEventListener('load', () => {
-      navigator.serviceWorker.register('./sw.js').catch(() => {});
+      navigator.serviceWorker.register('./sw.js').then(reg => {
+        // Nudge the browser to look for a newer service worker when the app opens.
+        reg.update?.();
+      }).catch(() => {});
     });
   }
 })();
