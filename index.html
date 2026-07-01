@@ -69,7 +69,7 @@ body[data-cardback="blueflame"] .backCard{background:radial-gradient(120px 90px 
 .motionCard.smoothMotion .motionFace{position:absolute;inset:0;width:100%;height:100%;backface-visibility:hidden;-webkit-backface-visibility:hidden;transform:translateZ(0);}
 .motionCard.smoothMotion .card,.motionCard.smoothMotion .backCard{position:absolute;left:0;top:0;width:100%;height:100%;--card-w:var(--motion-w);--card-h:var(--motion-h);}
 .seat.reviewed .seatGrid{border-color:rgba(240,202,104,.34);box-shadow:0 0 0 2px rgba(240,202,104,.08),inset 0 1px 0 rgba(255,255,255,.06)}
-.holeScoreTag{display:flex;align-items:center;justify-content:center;gap:5px;min-height:21px;max-width:116px;padding:3px 7px;border-radius:999px;background:rgba(7,11,16,.82);border:1px solid rgba(240,202,104,.38);box-shadow:0 5px 12px rgba(0,0,0,.28);font-size:.58rem;line-height:1;font-weight:1000;color:#fff7d2;white-space:nowrap;}
+.holeScoreTag{position:absolute;left:50%;top:calc(100% + 4px);transform:translateX(-50%);display:flex;align-items:center;justify-content:center;gap:5px;min-height:21px;max-width:116px;padding:3px 7px;border-radius:999px;background:rgba(7,11,16,.82);border:1px solid rgba(240,202,104,.38);box-shadow:0 5px 12px rgba(0,0,0,.28);font-size:.58rem;line-height:1;font-weight:1000;color:#fff7d2;white-space:nowrap;z-index:9;pointer-events:none;}
 .holeScoreTag span{color:var(--muted);font-size:.53rem;font-weight:900}.tableControls #viewResultsBtn,.tableControls #nextFromTableBtn{min-width:88px}
 
 
@@ -648,7 +648,7 @@ body[data-cardback="custom-image"] .backCard::after{
 
 
 
-/* v38: larger human cards, side swap option, and lower drawer chevron */
+/* v39: seamless score tally handoff and fixed review-tag layout */
 .drawerTab{top:calc(70dvh - 31px)!important;}
 /* Keep your cards large enough to play comfortably again. */
 .seat.human{--seat-card-w:clamp(50px,14vw,64px)!important;}
@@ -741,7 +741,7 @@ body.side-swap .tableControls{right:auto!important;left:8px!important;}
           <button class="drawerMenuBtn" id="newGameMenuBtn" type="button">Start New Game <small>fresh course</small></button>
           <button class="drawerMenuBtn" data-page="rulesPage" type="button">Rules <small>how to play</small></button>
         </nav>
-        <div class="drawerVersionBadge"><strong id="versionLabel">v38</strong></div>
+        <div class="drawerVersionBadge"><strong id="versionLabel">v39</strong></div>
       </div>
       <section class="subpage" id="scorePage"><div class="subTop"><button class="backBtn" type="button">‹</button><div class="subTitle">Scorecard</div></div><div id="scoreList"></div></section>
       <section class="subpage" id="logPage"><div class="subTop"><button class="backBtn" type="button">‹</button><div class="subTitle">Log</div></div><div id="logEntries"></div></section>
@@ -839,7 +839,7 @@ body.side-swap .tableControls{right:auto!important;left:8px!important;}
 <script>
 (() => {
   'use strict';
-  const VERSION = 'v38.0.0';
+  const VERSION = 'v39.0.0';
   const SAVE_KEY = 'golf_pwa_v5_save';
   const PREF_KEY = 'golf_pwa_v5_prefs';
   const RANKS = ['A','2','3','4','5','6','7','8','9','10','J','Q','K'];
@@ -1014,7 +1014,7 @@ body.side-swap .tableControls{right:auto!important;left:8px!important;}
   }
 
   function init(){
-    els.versionLabel.textContent = 'v38';
+    els.versionLabel.textContent = 'v39';
     loadPrefs(); bindEvents(); updateContinueButton(); render();
     window.addEventListener('resize', () => requestAnimationFrame(adjustBottomLayout));
     window.visualViewport?.addEventListener('resize', () => requestAnimationFrame(adjustBottomLayout));
@@ -1915,13 +1915,17 @@ body.side-swap .tableControls{right:auto!important;left:8px!important;}
     const clone = document.createElement('div'); clone.className = 'scorePillClone'; clone.textContent = row.oldTotal;
     clone.style.left = rect.left + 'px'; clone.style.top = rect.top + 'px'; clone.style.width = Math.max(1, rect.width) + 'px'; clone.style.height = Math.max(1, rect.height) + 'px';
     clone.style.fontSize = computed.fontSize; clone.style.fontWeight = computed.fontWeight; clone.style.fontFamily = computed.fontFamily; clone.style.lineHeight = computed.lineHeight; clone.style.padding = computed.padding; clone.style.borderRadius = computed.borderRadius;
-    document.body.appendChild(clone); pill.classList.add('scoreTallyHidden');
+    document.body.appendChild(clone);
+    pill.classList.add('scoreTallyHidden');
     await clone.animate([{transform:'scale(1)',opacity:1},{transform:'scale(2.55)',opacity:1}],{duration:280,easing:'cubic-bezier(.20,.82,.22,1)',fill:'forwards'}).finished.catch(()=>{});
     const start = Number(row.oldTotal) || 0; const end = Number(row.newTotal) || 0;
     if(end > start){
       const steps = end - start; const delay = Math.max(24, Math.min(62, 720 / Math.max(1, steps)));
       for(let v=start+1; v<=end; v++){ if(skipTally) break; clone.textContent = String(v); await sleep(delay); }
     } else { clone.textContent = String(end); await sleep(220); }
+
+    // Commit this player's score immediately and keep the real pill in its final state
+    // under the clone, so later player tally renders cannot briefly revert or shift it.
     pill.textContent = String(end);
     const statePlayer = state.players.find(p => p.id === row.playerId);
     if(statePlayer) statePlayer.total = end;
@@ -1930,8 +1934,17 @@ body.side-swap .tableControls{right:auto!important;left:8px!important;}
       const reviewRow = state.review.rows.find(r => r.playerId === row.playerId);
       if(reviewRow) reviewRow.total = end;
     }
-    await clone.animate([{transform:'scale(2.55)',opacity:1},{transform:'scale(1)',opacity:1}],{duration:310,easing:'cubic-bezier(.20,.82,.22,1)',fill:'forwards'}).finished.catch(()=>{});
-    clone.remove(); pill.classList.remove('scoreTallyHidden');
+    await nextFrame();
+    const finalRect = pill.getBoundingClientRect();
+    await clone.animate([
+      {left:rect.left + 'px', top:rect.top + 'px', width:Math.max(1, rect.width) + 'px', height:Math.max(1, rect.height) + 'px', transform:'scale(2.55)', opacity:1},
+      {left:finalRect.left + 'px', top:finalRect.top + 'px', width:Math.max(1, finalRect.width) + 'px', height:Math.max(1, finalRect.height) + 'px', transform:'scale(1)', opacity:1}
+    ],{duration:310,easing:'cubic-bezier(.20,.82,.22,1)',fill:'forwards'}).finished.catch(()=>{});
+    clone.style.left = finalRect.left + 'px'; clone.style.top = finalRect.top + 'px'; clone.style.width = Math.max(1, finalRect.width) + 'px'; clone.style.height = Math.max(1, finalRect.height) + 'px'; clone.style.transform = 'scale(1)';
+    await nextFrame();
+    pill.classList.remove('scoreTallyHidden');
+    await nextFrame();
+    clone.remove();
   }
   function reviewRowsForModal(){
     const rows = state.review?.rows || [];
