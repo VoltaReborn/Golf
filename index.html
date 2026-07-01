@@ -134,6 +134,26 @@ body[data-cardback="blueflame"] .backCard{background:radial-gradient(120px 90px 
 @media (max-height:740px){:root{--human-seat-top:76.5%;}.seat{--seat-card-w:clamp(26px,7.2vw,34px)!important}.seat.human{--seat-card-w:clamp(31px,9.4vw,40px)!important}.seat.human.six{--seat-card-w:clamp(28px,8.4vw,36px)!important}.seatGrid{gap:3px;padding:4px}.seat.human .seatGrid.selecting{gap:5px;padding:5px}.centerPiles{top:45.5%!important;gap:10px}.centerPiles .card,.centerPiles .backCard{--card-w:50px;--card-h:71px}.actionBanner{top:calc(50% + 70px)!important;font-size:.62rem;min-height:27px;width:min(90%,310px)}.tableControls{padding:4px;gap:4px;bottom:3px!important}.tableControls button{min-height:29px;font-size:.59rem;padding:3px 5px;border-radius:9px}.topHud{gap:4px}.infoChip{font-size:.56rem;padding:2px 6px}}
 @media (max-height:650px){:root{--human-seat-top:72.5%;}.seat.human{--seat-card-w:clamp(28px,8.5vw,36px)!important}.seat.human.six{--seat-card-w:clamp(25px,7.7vw,33px)!important}.seatName{height:18px;font-size:.62rem}.scorePill,.turnPill{font-size:.56rem;padding:2px 5px;min-width:34px}.turnPill{min-width:26px}.centerPiles{top:43%!important}.centerPiles .card,.centerPiles .backCard{--card-w:45px;--card-h:64px}.pileLabel,.deckCount{font-size:.52rem}.actionBanner{display:none}.tableControls button{min-height:27px;font-size:.56rem;padding-inline:4px}}
 
+
+/* v18: anchored bottom layout + fuller PWA safe-area coverage */
+html,body{background:radial-gradient(circle at 50% 0%,rgba(255,255,255,.08),transparent 34%),var(--felt)!important;background-color:var(--felt)!important;}
+.app{background-color:var(--felt);}
+.game{padding:calc(6px + var(--safe-top)) 6px 3px!important;}
+.tableControls{bottom:max(3px,calc(var(--safe-bottom) * .08))!important;}
+.seat{--seat-card-w:clamp(32px,8.9vw,42px)!important;}
+.seat.human{--seat-card-w:clamp(40px,11.8vw,52px)!important;top:var(--human-seat-top,80%)!important;}
+.seat.human.six{--seat-card-w:clamp(34px,10vw,44px)!important;}
+.seatGrid{gap:5px;padding:5px;}
+.seat.human .seatGrid{gap:5px;padding:6px;}
+@media (min-height:790px){.seat{--seat-card-w:clamp(33px,9.2vw,44px)!important}.seat.human{--seat-card-w:clamp(42px,12vw,54px)!important}.seat.human.six{--seat-card-w:clamp(35px,10.2vw,46px)!important}}
+@media (max-height:740px){.seat{--seat-card-w:clamp(29px,8.1vw,38px)!important}.seat.human{--seat-card-w:clamp(34px,10.1vw,44px)!important}.seat.human.six{--seat-card-w:clamp(29px,8.7vw,37px)!important}.actionBanner{top:calc(50% + 42px)!important;font-size:.62rem;min-height:27px}.tableControls{bottom:3px!important}}
+@media (max-height:650px){.seat{--seat-card-w:clamp(27px,7.7vw,35px)!important}.seat.human{--seat-card-w:clamp(31px,9.2vw,39px)!important}.seat.human.six{--seat-card-w:clamp(26px,8vw,33px)!important}.actionBanner{display:flex!important;top:calc(50% + 26px)!important;font-size:.58rem;min-height:24px;width:min(88%,292px)}}
+
+
+/* v19: stabilize bottom-seat layout before splash reveal; no visible bounce */
+.seat.human{transition:filter 180ms ease!important;}
+body.layout-settling .seat.human{transition:none!important;}
+
 </style>
 </head>
 <body class="face-light splashing" data-cardback="classic">
@@ -183,7 +203,7 @@ body[data-cardback="blueflame"] .backCard{background:radial-gradient(120px 90px 
           <button class="drawerMenuBtn" id="newGameMenuBtn" type="button">Start New Game <small>fresh course</small></button>
           <button class="drawerMenuBtn" data-page="rulesPage" type="button">Rules <small>how to play</small></button>
         </nav>
-        <div class="drawerVersionBadge"><strong id="versionLabel">v17</strong></div>
+        <div class="drawerVersionBadge"><strong id="versionLabel">v18</strong></div>
       </div>
       <section class="subpage" id="scorePage"><div class="subTop"><button class="backBtn" type="button">‹</button><div class="subTitle">Scorecard</div></div><div id="scoreList"></div></section>
       <section class="subpage" id="logPage"><div class="subTop"><button class="backBtn" type="button">‹</button><div class="subTitle">Log</div></div><div id="logEntries"></div></section>
@@ -273,13 +293,13 @@ body[data-cardback="blueflame"] .backCard{background:radial-gradient(120px 90px 
 <script>
 (() => {
   'use strict';
-  const VERSION = 'v17.0.0';
+  const VERSION = 'v19.0.0';
   const SAVE_KEY = 'golf_pwa_v5_save';
   const PREF_KEY = 'golf_pwa_v5_prefs';
   const RANKS = ['A','2','3','4','5','6','7','8','9','10','J','Q','K'];
   const SUITS = ['♠','♥','♦','♣'];
   const SUIT_NAMES = {'♠':'Spades','♥':'Hearts','♦':'Diamonds','♣':'Clubs','★':'Stars'};
-  const AI_NAMES = ['Maya','Leo','Riley','Sam','Nora','Theo','Ivy','Owen','Jade','Milo','Ava','Finn','Zoe','Eli','Luna','Cole'];
+  const AI_NAMES = ['Maya','Leo','Riley','Sam','Nora','Theo','Ivy','Owen','Milo','Ava','Finn','Zoe','Eli','Luna','Cole','Harper','Quinn','Rowan','Max','Nina','Caleb','Wren','Miles','Sophie','Ethan','Aria','Felix','Ruby','Logan','Piper','Grace','Mason','Chloe','Silas','Emma','Lucas','Hazel','Ben','Olive','Ezra','Clara','Noah','Tessa','Gabe','Mira'];
   const $ = id => document.getElementById(id);
   const els = {};
   ['app','game','table','seatLayer','holeChip','modeChip','dealerChip','tieChip','drawPileBtn','discardPileBtn','deckCount','discardCount','actionBanner','tableControls','startHoleBtn','viewResultsBtn','nextFromTableBtn','skipScoreBtn','peekBtn','cancelActionBtn','scorecardBtn','cardBackBlock','cardBackToggle','drawer','drawerTab','drawerHome','drawerSub','closeDrawer','versionLabel','scoreList','logEntries','splash','startBtn','continueBtn','splashRulesBtn','setupModal','setupCloseBtn','setupAiCount','setupCards','setupHoles','setupDifficulty','setupLookRule','setupSwapToggle','setupTieToggle','cancelNewGame','confirmNewGame','drawModal','drawModalTitle','drawModalBody','drawModalClose','discardDrawnBtn','replaceDrawnBtn','peekModal','peekBody','peekCloseBtn','swapBottomBtn','peekDoneBtn','holeModal','holeModalTitle','holeModalBody','backToTableBtn','nextHoleBtn','finishToSplashBtn','toast','newGameMenuBtn','lookRuleSelect','swapKnownToggle','tieToggle','aiPaceSelect','faceSelect','cardBackGallery','cardBackSummary','customCardBack','customFelt'].forEach(id => els[id] = $(id));
@@ -368,8 +388,11 @@ body[data-cardback="blueflame"] .backCard{background:radial-gradient(120px 90px 
   function togglePref(key, el){ prefs[key] = !prefs[key]; setToggle(el, prefs[key]); savePrefs(); }
 
   function init(){
-    els.versionLabel.textContent = 'v17';
+    els.versionLabel.textContent = 'v19';
     loadPrefs(); bindEvents(); updateContinueButton(); render();
+    window.addEventListener('resize', () => requestAnimationFrame(adjustBottomLayout));
+    window.visualViewport?.addEventListener('resize', () => requestAnimationFrame(adjustBottomLayout));
+    window.visualViewport?.addEventListener('scroll', () => requestAnimationFrame(adjustBottomLayout));
   }
   function bindEvents(){
     els.startBtn.addEventListener('click', () => openSetup());
@@ -618,7 +641,7 @@ body[data-cardback="blueflame"] .backCard{background:radial-gradient(120px 90px 
     els.discardCount.textContent = state.active ? `${state.discard.length} card${state.discard.length===1?'':'s'}` : '—';
     els.actionBanner.textContent = state.message || '';
     els.tableControls.classList.toggle('scoring', !!state.review?.tallying);
-    renderPiles(); renderSeats(); renderHumanGrid(); renderScores(); renderLog(); updateActionButtons(); updateContinueButton();
+    renderPiles(); renderSeats(); renderHumanGrid(); renderScores(); renderLog(); updateActionButtons(); updateContinueButton(); adjustBottomLayout(true); requestAnimationFrame(() => adjustBottomLayout(true));
   }
   function renderPiles(){
     els.drawPileBtn.innerHTML = state.active ? renderBackCard() : renderBackCard();
@@ -650,6 +673,32 @@ body[data-cardback="blueflame"] .backCard{background:radial-gradient(120px 90px 
     if(n === 3) return [{left:50,top:81},{left:21,top:38},{left:79,top:38}];
     if(n === 4) return [{left:50,top:82},{left:18,top:49},{left:50,top:20},{left:82,top:49}];
     return [{left:50,top:82},{left:17,top:59},{left:20,top:27},{left:80,top:27},{left:83,top:59}];
+  }
+  function adjustBottomLayout(stabilize=false){
+    if(!els.table || !els.tableControls || !els.seatLayer) return;
+    const humanSeat = els.seatLayer.querySelector('.seat.human');
+    if(!humanSeat || !state.active) return;
+    const tableRect = els.table.getBoundingClientRect();
+    const controlsRect = els.tableControls.getBoundingClientRect();
+    const seatRect = humanSeat.getBoundingClientRect();
+    if(!tableRect.height || !controlsRect.height || !seatRect.height) return;
+    const gap = 4;
+    const controlTop = controlsRect.top - tableRect.top;
+    let topPx = controlTop - gap - (seatRect.height / 2);
+    const minTop = tableRect.height * (state.cardCount === 6 ? 0.64 : 0.68);
+    const maxTop = tableRect.height - (seatRect.height / 2) - gap;
+    topPx = Math.max(minTop, Math.min(maxTop, topPx));
+    const nextTop = `${Math.round(topPx * 100) / 100}px`;
+    if(humanSeat.style.top === nextTop) return;
+    if(stabilize){
+      document.body.classList.add('layout-settling');
+      humanSeat.style.setProperty('top', nextTop, 'important');
+      // Force the final anchored position to apply before the splash transition exposes the table.
+      humanSeat.offsetHeight;
+      requestAnimationFrame(() => document.body.classList.remove('layout-settling'));
+    }else{
+      humanSeat.style.setProperty('top', nextTop, 'important');
+    }
   }
   function renderHumanGrid(){ renderControls(); }
   function renderControls(){
