@@ -350,6 +350,66 @@ body[data-safe-mode="overdrive"] .table{bottom:calc((var(--safe-bottom) + 56px) 
 body[data-safe-mode="overdrive"] .tableControls{bottom:calc((var(--safe-bottom) + 18px) * -1)!important;}
 body[data-safe-mode="overdrive"] .seat.human{transform:translate(-50%,-51%)!important;}
 
+
+
+/* v27/v28: viewport/background diagnostics for iOS standalone bottom strip */
+:root{--safe-test-bg:radial-gradient(circle at 50% 0%,rgba(255,255,255,.08),transparent 34%),var(--felt);}
+:root[data-safe-mode="html-fill"],
+:root[data-safe-mode="fixed-bg-fill"],
+:root[data-safe-mode="app-bleed"],
+:root[data-safe-mode="viewport-height"],
+:root[data-safe-mode="viewport-100vh"],
+:root[data-safe-mode="viewport-100lvh"]{
+  background:var(--safe-test-bg)!important;
+  background-color:var(--felt)!important;
+}
+:root[data-safe-mode="html-fill"] body,
+body[data-safe-mode="html-fill"]{
+  background:var(--safe-test-bg)!important;
+  background-color:var(--felt)!important;
+}
+body[data-safe-mode="fixed-bg-fill"]::after{
+  content:"";
+  position:fixed;
+  inset:0;
+  z-index:0;
+  pointer-events:none;
+  background:var(--safe-test-bg)!important;
+  background-color:var(--felt)!important;
+}
+body[data-safe-mode="fixed-bg-fill"] .app,
+body[data-safe-mode="fixed-bg-fill"] .drawer,
+body[data-safe-mode="fixed-bg-fill"] .modalOverlay,
+body[data-safe-mode="fixed-bg-fill"] .splash,
+body[data-safe-mode="fixed-bg-fill"] .toast{z-index:1;}
+body[data-safe-mode="app-bleed"] .app{
+  top:0!important;
+  bottom:auto!important;
+  height:calc(100dvh + var(--safe-bottom) + 96px)!important;
+  min-height:calc(100dvh + var(--safe-bottom) + 96px)!important;
+  transform:translateX(-50%)!important;
+}
+body[data-safe-mode="app-bleed"] .game{height:100%!important;min-height:100%!important;}
+body[data-safe-mode="app-bleed"] .table{height:100%!important;}
+body[data-safe-mode="viewport-height"] .app{height:calc(100vh + var(--safe-bottom))!important;min-height:calc(100vh + var(--safe-bottom))!important;}
+body[data-safe-mode="viewport-100vh"] .app,
+body[data-safe-mode="viewport-100vh"] .game{height:100vh!important;min-height:100vh!important;}
+body[data-safe-mode="viewport-100lvh"] .app,
+body[data-safe-mode="viewport-100lvh"] .game{height:100lvh!important;min-height:100lvh!important;}
+:root[data-safe-mode="debug-layers"]{background:#ff1744!important;background-color:#ff1744!important;}
+:root[data-safe-mode="debug-layers"] body{background:#0b6bff!important;background-color:#0b6bff!important;}
+body[data-safe-mode="debug-layers"] .app{background:#0ad64b!important;background-color:#0ad64b!important;}
+body[data-safe-mode="debug-layers"] .table{background:#8b19ff!important;background-color:#8b19ff!important;}
+:root[data-safe-mode="debug-html"]{background:#ff1744!important;background-color:#ff1744!important;}
+:root[data-safe-mode="debug-html"] body{background:transparent!important;background-color:transparent!important;}
+:root[data-safe-mode="debug-body"]{background:#ff1744!important;background-color:#ff1744!important;}
+:root[data-safe-mode="debug-body"] body{background:#0b6bff!important;background-color:#0b6bff!important;}
+body[data-safe-mode="debug-app"]{background:#0b6bff!important;background-color:#0b6bff!important;}
+body[data-safe-mode="debug-app"] .app{background:#0ad64b!important;background-color:#0ad64b!important;}
+body[data-safe-mode="debug-table"]{background:#0b6bff!important;background-color:#0b6bff!important;}
+body[data-safe-mode="debug-table"] .app{background:#0ad64b!important;background-color:#0ad64b!important;}
+body[data-safe-mode="debug-table"] .table{background:#8b19ff!important;background-color:#8b19ff!important;}
+
 </style>
 </head>
 <body class="face-light splashing" data-cardback="classic">
@@ -446,17 +506,21 @@ body[data-safe-mode="overdrive"] .seat.human{transform:translate(-50%,-51%)!impo
             </div></div>
             <div class="controlRow"><label for="customFelt">Custom felt</label><input id="customFelt" type="color" value="#0a5a3c" /></div>
           </div>
-          <div class="sectionBox"><h3>PWA bottom test</h3>
+          <div class="sectionBox"><h3>PWA bottom / viewport test</h3>
             <div class="controlRow"><label for="bottomSafeSelect">Bottom reach mode</label><select id="bottomSafeSelect">
-              <option value="standard">Standard / safe</option>
-              <option value="paint">Paint-only fill</option>
-              <option value="deep-board">Deep board fill</option>
-              <option value="controls-low">Controls lower</option>
-              <option value="unsafe-controls">Unsafe controls</option>
-              <option value="edge-controls">Edge controls</option>
-              <option value="overdrive">Overdrive test</option>
+              <option value="fixed-bg-fill">Fixed full-screen felt fill</option>
+              <option value="html-fill">HTML/body felt fill</option>
+              <option value="app-bleed">App bleed below viewport</option>
+              <option value="viewport-height">Viewport height=device-height</option>
+              <option value="viewport-100vh">Force 100vh layout</option>
+              <option value="viewport-100lvh">Force 100lvh layout</option>
+              <option value="debug-layers">Debug layer colors</option>
+              <option value="debug-html">Debug HTML red</option>
+              <option value="debug-body">Debug body blue</option>
+              <option value="debug-app">Debug app green</option>
+              <option value="debug-table">Debug table purple</option>
             </select></div>
-            <p class="smallHelp">Experimental iPhone/PWA layout modes. Some intentionally place tappable controls in the unsafe bottom area so we can see what the browser will actually allow.</p>
+            <p class="smallHelp">Experimental iPhone/PWA viewport and diagnostic modes. The older bottom-reach tests were removed because they did not affect the visible strip. The debug color modes are meant to reveal which layer owns the bottom strip: if that strip changes color, tell me which mode/color did it.</p>
           </div>
         </div>
       </section>
@@ -501,7 +565,7 @@ body[data-safe-mode="overdrive"] .seat.human{transform:translate(-50%,-51%)!impo
 <script>
 (() => {
   'use strict';
-  const VERSION = 'v26.0.0';
+  const VERSION = 'v28.0.0';
   const SAVE_KEY = 'golf_pwa_v5_save';
   const PREF_KEY = 'golf_pwa_v5_prefs';
   const RANKS = ['A','2','3','4','5','6','7','8','9','10','J','Q','K'];
@@ -512,7 +576,7 @@ body[data-safe-mode="overdrive"] .seat.human{transform:translate(-50%,-51%)!impo
   const els = {};
   ['app','game','table','seatLayer','holeChip','modeChip','dealerChip','tieChip','drawPileBtn','discardPileBtn','deckCount','discardCount','actionBanner','tableControls','startHoleBtn','viewResultsBtn','nextFromTableBtn','skipScoreBtn','peekBtn','cancelActionBtn','scorecardBtn','cardBackBlock','cardBackToggle','drawer','drawerTab','drawerHome','drawerSub','closeDrawer','versionLabel','scoreList','logEntries','splash','startBtn','continueBtn','splashRulesBtn','setupModal','setupCloseBtn','setupAiCount','setupCards','setupHoles','setupDifficulty','setupLookRule','setupSwapToggle','setupTieToggle','cancelNewGame','confirmNewGame','drawModal','drawModalTitle','drawModalBody','drawModalClose','discardDrawnBtn','replaceDrawnBtn','peekModal','peekBody','peekCloseBtn','swapBottomBtn','peekDoneBtn','holeModal','holeModalTitle','holeModalBody','backToTableBtn','nextHoleBtn','finishToSplashBtn','toast','newGameMenuBtn','lookRuleSelect','swapKnownToggle','tieToggle','aiPaceSelect','faceSelect','cardBackGallery','cardBackSummary','customCardBack','customFelt','bottomSafeSelect'].forEach(id => els[id] = $(id));
 
-  const prefsDefault = {lookRule:'anytime', allowSwap:true, tiebreaker:true, aiPace:'normal', face:'light', cardBack:'classic', customCardBack:'#1e4e8c', felt:'#0a5a3c', feltDeep:'#084a33', bottomSafeMode:'standard'};
+  const prefsDefault = {lookRule:'anytime', allowSwap:true, tiebreaker:true, aiPace:'normal', face:'light', cardBack:'classic', customCardBack:'#1e4e8c', felt:'#0a5a3c', feltDeep:'#084a33', bottomSafeMode:'fixed-bg-fill'};
   let prefs = {...prefsDefault};
   let state = emptyState();
   let drawerDrag = null;
@@ -548,7 +612,7 @@ body[data-safe-mode="overdrive"] .seat.human{transform:translate(-50%,-51%)!impo
     document.documentElement.style.setProperty('--custom-card-back', prefs.customCardBack || '#1e4e8c');
     setFelt(prefs.felt || '#0a5a3c', prefs.feltDeep || makeDarkerColor(prefs.felt || '#0a5a3c'), false);
     applyBottomSafeMode();
-    if(els.bottomSafeSelect) els.bottomSafeSelect.value = prefs.bottomSafeMode || 'standard';
+    if(els.bottomSafeSelect) els.bottomSafeSelect.value = prefs.bottomSafeMode || 'fixed-bg-fill';
     els.lookRuleSelect.value = prefs.lookRule;
     els.aiPaceSelect.value = prefs.aiPace;
     els.faceSelect.value = prefs.face;
@@ -571,11 +635,22 @@ body[data-safe-mode="overdrive"] .seat.human{transform:translate(-50%,-51%)!impo
     if(persist) savePrefs();
   }
   function applyBottomSafeMode(){
-    const allowed = new Set(['standard','paint','deep-board','controls-low','unsafe-controls','edge-controls','overdrive']);
-    const mode = allowed.has(prefs.bottomSafeMode) ? prefs.bottomSafeMode : 'standard';
+    const allowed = new Set(['fixed-bg-fill','html-fill','app-bleed','viewport-height','viewport-100vh','viewport-100lvh','debug-layers','debug-html','debug-body','debug-app','debug-table']);
+    const mode = allowed.has(prefs.bottomSafeMode) ? prefs.bottomSafeMode : 'fixed-bg-fill';
     prefs.bottomSafeMode = mode;
     document.body.dataset.safeMode = mode;
+    document.documentElement.dataset.safeMode = mode;
+    applyViewportMetaForMode(mode);
     requestAnimationFrame(() => adjustBottomLayout());
+  }
+  function applyViewportMetaForMode(mode){
+    const meta = document.querySelector('meta[name="viewport"]');
+    if(!meta) return;
+    let content = 'width=device-width, initial-scale=1, viewport-fit=cover';
+    if(mode === 'viewport-height') content = 'width=device-width, height=device-height, initial-scale=1, viewport-fit=cover';
+    if(mode === 'viewport-100vh') content = 'width=device-width, initial-scale=1, maximum-scale=1, viewport-fit=cover';
+    if(mode === 'viewport-100lvh') content = 'width=device-width, initial-scale=1, viewport-fit=cover, interactive-widget=resizes-content';
+    meta.setAttribute('content', content);
   }
   function makeDarkerColor(hex){
     const s = (hex || '#0a5a3c').replace('#','');
@@ -605,7 +680,7 @@ body[data-safe-mode="overdrive"] .seat.human{transform:translate(-50%,-51%)!impo
   function togglePref(key, el){ prefs[key] = !prefs[key]; setToggle(el, prefs[key]); savePrefs(); }
 
   function init(){
-    els.versionLabel.textContent = 'v26';
+    els.versionLabel.textContent = 'v28';
     loadPrefs(); bindEvents(); updateContinueButton(); render();
     window.addEventListener('resize', () => requestAnimationFrame(adjustBottomLayout));
     window.visualViewport?.addEventListener('resize', () => requestAnimationFrame(adjustBottomLayout));
