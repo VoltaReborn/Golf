@@ -121,6 +121,19 @@ body[data-cardback="blueflame"] .backCard{background:radial-gradient(120px 90px 
 /* v16: reliable drawer tap + roomier bottom table layout */
 .tableControls{bottom:calc(3px + var(--safe-bottom))}
 @media (min-height:740px){.centerPiles{top:47.5%}.actionBanner{top:calc(50% + 102px)}}
+
+
+/* v17: responsive bottom layout — use available PWA space, compact cleanly in Safari */
+:root{--human-seat-top:80%;}
+.tableControls{bottom:4px!important;max-width:calc(100% - 12px);flex-wrap:wrap;align-items:center;row-gap:5px;}
+.seat.human{top:var(--human-seat-top)!important;}
+.seat.human.six{--seat-card-w:clamp(31px,9.4vw,41px)!important;}
+.tableControls button{flex:0 0 auto;}
+@supports(padding:max(0px)){.tableControls{bottom:max(4px,calc(var(--safe-bottom) * .10))!important;}}
+@media (min-height:790px){:root{--human-seat-top:81.5%;}.seat.human{--seat-card-w:clamp(37px,10.6vw,48px)!important}.seat.human.six{--seat-card-w:clamp(32px,9.2vw,42px)!important}.centerPiles{top:47%!important}.actionBanner{top:calc(50% + 104px)!important;}}
+@media (max-height:740px){:root{--human-seat-top:76.5%;}.seat{--seat-card-w:clamp(26px,7.2vw,34px)!important}.seat.human{--seat-card-w:clamp(31px,9.4vw,40px)!important}.seat.human.six{--seat-card-w:clamp(28px,8.4vw,36px)!important}.seatGrid{gap:3px;padding:4px}.seat.human .seatGrid.selecting{gap:5px;padding:5px}.centerPiles{top:45.5%!important;gap:10px}.centerPiles .card,.centerPiles .backCard{--card-w:50px;--card-h:71px}.actionBanner{top:calc(50% + 70px)!important;font-size:.62rem;min-height:27px;width:min(90%,310px)}.tableControls{padding:4px;gap:4px;bottom:3px!important}.tableControls button{min-height:29px;font-size:.59rem;padding:3px 5px;border-radius:9px}.topHud{gap:4px}.infoChip{font-size:.56rem;padding:2px 6px}}
+@media (max-height:650px){:root{--human-seat-top:72.5%;}.seat.human{--seat-card-w:clamp(28px,8.5vw,36px)!important}.seat.human.six{--seat-card-w:clamp(25px,7.7vw,33px)!important}.seatName{height:18px;font-size:.62rem}.scorePill,.turnPill{font-size:.56rem;padding:2px 5px;min-width:34px}.turnPill{min-width:26px}.centerPiles{top:43%!important}.centerPiles .card,.centerPiles .backCard{--card-w:45px;--card-h:64px}.pileLabel,.deckCount{font-size:.52rem}.actionBanner{display:none}.tableControls button{min-height:27px;font-size:.56rem;padding-inline:4px}}
+
 </style>
 </head>
 <body class="face-light splashing" data-cardback="classic">
@@ -170,7 +183,7 @@ body[data-cardback="blueflame"] .backCard{background:radial-gradient(120px 90px 
           <button class="drawerMenuBtn" id="newGameMenuBtn" type="button">Start New Game <small>fresh course</small></button>
           <button class="drawerMenuBtn" data-page="rulesPage" type="button">Rules <small>how to play</small></button>
         </nav>
-        <div class="drawerVersionBadge"><strong id="versionLabel">v16</strong></div>
+        <div class="drawerVersionBadge"><strong id="versionLabel">v17</strong></div>
       </div>
       <section class="subpage" id="scorePage"><div class="subTop"><button class="backBtn" type="button">‹</button><div class="subTitle">Scorecard</div></div><div id="scoreList"></div></section>
       <section class="subpage" id="logPage"><div class="subTop"><button class="backBtn" type="button">‹</button><div class="subTitle">Log</div></div><div id="logEntries"></div></section>
@@ -260,7 +273,7 @@ body[data-cardback="blueflame"] .backCard{background:radial-gradient(120px 90px 
 <script>
 (() => {
   'use strict';
-  const VERSION = 'v16.0.0';
+  const VERSION = 'v17.0.0';
   const SAVE_KEY = 'golf_pwa_v5_save';
   const PREF_KEY = 'golf_pwa_v5_prefs';
   const RANKS = ['A','2','3','4','5','6','7','8','9','10','J','Q','K'];
@@ -355,7 +368,7 @@ body[data-cardback="blueflame"] .backCard{background:radial-gradient(120px 90px 
   function togglePref(key, el){ prefs[key] = !prefs[key]; setToggle(el, prefs[key]); savePrefs(); }
 
   function init(){
-    els.versionLabel.textContent = 'v16';
+    els.versionLabel.textContent = 'v17';
     loadPrefs(); bindEvents(); updateContinueButton(); render();
   }
   function bindEvents(){
@@ -628,7 +641,7 @@ body[data-cardback="blueflame"] .backCard{background:radial-gradient(120px 90px 
         }
         return `<div class="slot miniSlot${faceDown}" data-player-id="${p.id}" data-slot="${idx}">${contents}</div>`;
       }).join('');
-      return `<div class="seat ${p.human?'human':''} ${i===state.turnIndex && state.holeStarted && !state.review?'current':''} ${i===state.dealerIndex?'dealer':''} ${reviewRow?'reviewed':''} ${state.review?.tallying && state.review?.activePlayerId===p.id?'tallying':''}" data-player-id="${p.id}" style="left:${pos.left}%;top:${pos.top}%"><div class="seatName">${escapeHtml(playerName(p))}</div><div class="seatMeta"><span class="scorePill" data-score-player="${p.id}">${p.total}</span><span class="turnPill">${p.turns}/${state.cardCount}</span></div><div class="seatGrid ${gridClass}${selectable && p.human ? ' selecting' : ''}">${slots}</div>${reviewRow && !state.review?.tallying ? `<div class="holeScoreTag"><b>Hole ${reviewRow.score}</b><span>Total ${reviewRow.total}</span></div>` : ''}</div>`;
+      return `<div class="seat ${gridClass} ${p.human?'human':''} ${i===state.turnIndex && state.holeStarted && !state.review?'current':''} ${i===state.dealerIndex?'dealer':''} ${reviewRow?'reviewed':''} ${state.review?.tallying && state.review?.activePlayerId===p.id?'tallying':''}" data-player-id="${p.id}" style="left:${pos.left}%;top:${pos.top}%"><div class="seatName">${escapeHtml(playerName(p))}</div><div class="seatMeta"><span class="scorePill" data-score-player="${p.id}">${p.total}</span><span class="turnPill">${p.turns}/${state.cardCount}</span></div><div class="seatGrid ${gridClass}${selectable && p.human ? ' selecting' : ''}">${slots}</div>${reviewRow && !state.review?.tallying ? `<div class="holeScoreTag"><b>Hole ${reviewRow.score}</b><span>Total ${reviewRow.total}</span></div>` : ''}</div>`;
     }).join('');
     els.seatLayer.querySelectorAll('.seat.human [data-slot]').forEach(btn => btn.addEventListener('click', () => selectHumanSlot(Number(btn.dataset.slot))));
   }
