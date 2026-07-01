@@ -250,6 +250,86 @@ body::before{
 .actionBanner{z-index:18;}
 .tableControls{z-index:22;}
 
+
+
+/* v25: make the PWA bottom fill visual-only and anchor controls low without using svh */
+html,body{
+  height:100%!important;
+  min-height:100dvh!important;
+  background:var(--felt)!important;
+  background-color:var(--felt)!important;
+  overflow:hidden!important;
+}
+body::before{
+  content:"";
+  position:fixed;
+  inset:0;
+  z-index:-1;
+  pointer-events:none;
+  background:
+    radial-gradient(circle at 50% 0%,rgba(255,255,255,.08),transparent 34%),
+    var(--felt)!important;
+}
+.app{
+  position:fixed!important;
+  top:0!important;
+  bottom:0!important;
+  left:50%!important;
+  right:auto!important;
+  width:min(100vw,var(--boardMax))!important;
+  height:100dvh!important;
+  min-height:100dvh!important;
+  max-height:none!important;
+  transform:translateX(-50%)!important;
+  margin:0!important;
+  background-color:var(--felt)!important;
+  overflow:hidden!important;
+}
+.game{
+  position:absolute!important;
+  inset:0!important;
+  display:block!important;
+  padding:0!important;
+  height:auto!important;
+  min-height:0!important;
+}
+.table{
+  position:absolute!important;
+  left:6px!important;
+  right:6px!important;
+  top:calc(6px + var(--safe-top))!important;
+  bottom:0!important;
+  height:auto!important;
+  min-height:0!important;
+  border-bottom:0!important;
+  border-bottom-left-radius:0!important;
+  border-bottom-right-radius:0!important;
+}
+.table::before{
+  content:"";
+  position:absolute;
+  left:0;
+  right:0;
+  bottom:0;
+  height:max(56px,calc(var(--safe-bottom) + 28px));
+  pointer-events:none;
+  background:linear-gradient(180deg,rgba(0,0,0,0),rgba(0,0,0,.13));
+  z-index:0;
+}
+#seatLayer{position:static!important;}
+.topHud,.centerPiles,.actionBanner,.tableControls{position:absolute!important;}
+.tableControls{
+  bottom:max(4px,calc(var(--safe-bottom) * .12))!important;
+  z-index:26!important;
+}
+@media (display-mode:standalone){
+  .app,.game{height:100dvh!important;min-height:100dvh!important;}
+  .tableControls{bottom:max(4px,calc(var(--safe-bottom) * .10))!important;}
+}
+@media (max-height:740px){
+  .tableControls{bottom:3px!important;}
+}
+
 </style>
 </head>
 <body class="face-light splashing" data-cardback="classic">
@@ -389,7 +469,7 @@ body::before{
 <script>
 (() => {
   'use strict';
-  const VERSION = 'v24.0.0';
+  const VERSION = 'v25.0.0';
   const SAVE_KEY = 'golf_pwa_v5_save';
   const PREF_KEY = 'golf_pwa_v5_prefs';
   const RANKS = ['A','2','3','4','5','6','7','8','9','10','J','Q','K'];
@@ -484,7 +564,7 @@ body::before{
   function togglePref(key, el){ prefs[key] = !prefs[key]; setToggle(el, prefs[key]); savePrefs(); }
 
   function init(){
-    els.versionLabel.textContent = 'v24';
+    els.versionLabel.textContent = 'v25';
     loadPrefs(); bindEvents(); updateContinueButton(); render();
     window.addEventListener('resize', () => requestAnimationFrame(adjustBottomLayout));
     window.visualViewport?.addEventListener('resize', () => requestAnimationFrame(adjustBottomLayout));
