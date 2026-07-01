@@ -725,6 +725,30 @@ body.side-swap .tableControls{right:auto!important;left:8px!important;}
 .updateBtnGrid .primaryBtn,.updateBtnGrid .ghostBtn,#clearCacheBtn{width:100%;min-height:40px}
 .updateFresh{color:#9ff7cf!important;font-weight:1000!important}
 .updateStale{color:#fff0a8!important;font-weight:1000!important}
+
+
+/* v45: update menu polish */
+.drawerHome{min-height:100%;display:flex;flex-direction:column;}
+.drawerHome nav{flex:1 1 auto;}
+.drawerFooterTools{margin-top:auto;padding-top:10px;display:flex;align-items:center;gap:8px;border-top:1px solid rgba(255,255,255,.10);}
+.drawerUpdateBtn{flex:1 1 auto;min-height:40px;border:1px solid rgba(255,255,255,.16);border-radius:999px;background:rgba(255,255,255,.075);color:var(--gold);font-size:.74rem;font-weight:1000;text-transform:uppercase;letter-spacing:.06em;display:flex;align-items:center;justify-content:center;gap:6px;padding:7px 10px;}
+.drawerUpdateBtn small{font-size:.60rem;letter-spacing:0;text-transform:none;color:var(--muted);font-weight:900;}
+.drawerFooterTools .drawerVersionBadge{margin:0;flex:0 0 auto;}
+.updatePage{padding-top:0;}
+.updatePage .subTop{margin-bottom:8px;}
+.updateMainBox{margin-top:0;}
+.updateBtnGrid{display:grid;grid-template-columns:1fr;gap:8px;margin-top:10px}
+.updateBtnGrid .primaryBtn,.updateBtnGrid .ghostBtn,#clearCacheBtn{width:100%;min-height:42px}
+.updateBtnGrid .hidden{display:none!important;}
+.updateRepairBox{border-color:rgba(255,115,115,.22);background:rgba(255,80,80,.045);}
+.updateRepairBox summary{cursor:pointer;color:#ffd7d7;font-size:.8rem;font-weight:1000;text-transform:uppercase;letter-spacing:.06em;list-style:none;}
+.updateRepairBox summary::-webkit-details-marker{display:none;}
+.updateRepairBox summary::after{content:'⌄';float:right;color:var(--muted);}
+.updateRepairBox[open] summary::after{transform:rotate(180deg);}
+.dangerGhost{border-color:rgba(255,115,115,.35)!important;background:rgba(255,80,80,.10)!important;color:#fff0f0!important;}
+.updateFresh{color:#9ff7cf!important;font-weight:1000!important}
+.updateStale{color:#fff0a8!important;font-weight:1000!important}
+
 </style>
 </head>
 <body class="face-light splashing" data-cardback="classic">
@@ -778,11 +802,13 @@ body.side-swap .tableControls{right:auto!important;left:8px!important;}
           <button class="drawerMenuBtn" data-page="scorePage" type="button">Scorecard <small>holes + totals</small></button>
           <button class="drawerMenuBtn" data-page="logPage" type="button">Log <small>latest actions</small></button>
           <button class="drawerMenuBtn" data-page="settingsPage" type="button">Settings <small>gameplay + appearance</small></button>
-          <button class="drawerMenuBtn" data-page="updatePage" type="button">App Update <small>latest version</small></button>
           <button class="drawerMenuBtn" id="newGameMenuBtn" type="button">Start New Game <small>fresh course</small></button>
           <button class="drawerMenuBtn" data-page="rulesPage" type="button">Rules <small>how to play</small></button>
         </nav>
-        <div class="drawerVersionBadge"><strong id="versionLabel">v44</strong></div>
+        <div class="drawerFooterTools">
+          <button class="drawerUpdateBtn" data-page="updatePage" type="button"><span>App Update</span><small>latest version</small></button>
+          <div class="drawerVersionBadge"><strong id="versionLabel">v45</strong></div>
+        </div>
       </div>
       <section class="subpage" id="scorePage"><div class="subTop"><button class="backBtn" type="button">‹</button><div class="subTitle">Scorecard</div></div><div id="scoreList"></div></section>
       <section class="subpage" id="logPage"><div class="subTop"><button class="backBtn" type="button">‹</button><div class="subTitle">Log</div></div><div id="logEntries"></div></section>
@@ -840,12 +866,11 @@ body.side-swap .tableControls{right:auto!important;left:8px!important;}
         </div>
       </section>
 
-      <section class="subpage" id="updatePage"><div class="subTop"><button class="backBtn" type="button">‹</button><div class="subTitle">App Update</div></div>
-        <div class="sectionBox"><h3>Current version</h3><p id="updateStatusText">Golf v44 is running.</p>
-          <div class="updateBtnGrid"><button class="primaryBtn" id="checkUpdateBtn" type="button">Check for update</button><button class="ghostBtn" id="forceLatestBtn" type="button">Force latest version</button></div>
-          <p class="smallHelp">Use this after publishing a new GitHub update if the installed PWA keeps showing an old version.</p>
+      <section class="subpage updatePage" id="updatePage"><div class="subTop"><button class="backBtn" type="button">‹</button><div class="subTitle">App Update</div></div>
+        <div class="sectionBox updateMainBox"><h3>Current version</h3><p id="updateStatusText">Golf v45 is running.</p>
+          <div class="updateBtnGrid"><button class="primaryBtn" id="checkUpdateBtn" type="button">Check for update</button><button class="primaryBtn hidden" id="forceLatestBtn" type="button">Apply update</button></div>
         </div>
-        <div class="sectionBox"><h3>Cache reset</h3><p class="smallHelp">This clears Golf's service-worker caches, asks the browser for the newest files, then reloads the app.</p><button class="ghostBtn" id="clearCacheBtn" type="button">Clear app cache + reload</button></div>
+        <details class="sectionBox updateRepairBox"><summary>Advanced repair</summary><p class="smallHelp">Use this only if the app still seems stuck on an older version. It clears cached app files and reloads Golf. It does not erase your saved game or settings.</p><button class="ghostBtn dangerGhost" id="clearCacheBtn" type="button">Clear cached app files + reload</button></details>
       </section>
       <section class="subpage" id="rulesPage"><div class="subTop"><button class="backBtn" type="button">‹</button><div class="subTitle">Rules</div></div>
         <div class="sectionBox"><h3>Goal</h3><p>Finish 9 or 18 holes with the lowest total score.</p></div>
@@ -889,7 +914,7 @@ body.side-swap .tableControls{right:auto!important;left:8px!important;}
 <script>
 (() => {
   'use strict';
-  const VERSION = 'v44.0.0';
+  const VERSION = 'v45.0.0';
   const SAVE_KEY = 'golf_pwa_v5_save';
   const PREF_KEY = 'golf_pwa_v5_prefs';
   const RANKS = ['A','2','3','4','5','6','7','8','9','10','J','Q','K'];
@@ -1068,8 +1093,8 @@ body.side-swap .tableControls{right:auto!important;left:8px!important;}
   }
 
   function init(){
-    els.versionLabel.textContent = 'v44';
-    setUpdateStatus('Golf v44 is running.');
+    els.versionLabel.textContent = 'v45';
+    setUpdateStatus('Golf v45 is running.');
     loadPrefs(); bindEvents(); updateContinueButton(); render();
     wireServiceWorkerUpdates();
     startAutomaticUpdateChecks();
@@ -1087,7 +1112,7 @@ body.side-swap .tableControls{right:auto!important;left:8px!important;}
     els.splashRulesBtn.addEventListener('click', () => { document.body.classList.add('splash-rules-open'); openDrawer('rulesPage'); });
     els.closeDrawer.addEventListener('click', closeDrawer);
     els.drawerTab.addEventListener('click', ev => { if(drawerTapClickUntil && Date.now() < drawerTapClickUntil){ ev.preventDefault(); return; } toggleDrawer(); });
-    document.querySelectorAll('.drawerMenuBtn[data-page]').forEach(btn => btn.addEventListener('click', () => showDrawerPage(btn.dataset.page)));
+    document.querySelectorAll('.drawerMenuBtn[data-page], .drawerUpdateBtn[data-page]').forEach(btn => btn.addEventListener('click', () => showDrawerPage(btn.dataset.page)));
     document.querySelectorAll('.backBtn').forEach(btn => btn.addEventListener('click', showDrawerHome));
     bindDrawerDrag();
     document.querySelectorAll('.settingsTabBtn').forEach(btn => btn.addEventListener('click', () => showSettingsTab(btn.dataset.settingsTab)));
@@ -1128,7 +1153,10 @@ body.side-swap .tableControls{right:auto!important;left:8px!important;}
     els.customFelt.addEventListener('input', () => setFelt(els.customFelt.value, makeDarkerColor(els.customFelt.value)));
     els.checkUpdateBtn?.addEventListener('click', () => checkForUpdate());
     els.forceLatestBtn?.addEventListener('click', forceLatestVersion);
-    els.clearCacheBtn?.addEventListener('click', forceLatestVersion);
+    els.clearCacheBtn?.addEventListener('click', () => {
+      const ok = window.confirm('Clear cached app files and reload Golf? Your saved game and settings will not be erased.');
+      if(ok) forceLatestVersion();
+    });
     els.updateToastNow?.addEventListener('click', forceLatestVersion);
     els.updateToastLater?.addEventListener('click', dismissUpdatePrompt);
     document.querySelectorAll('[data-felt]').forEach(btn => btn.addEventListener('click', () => { setFelt(btn.dataset.felt, btn.dataset.feltDeep || makeDarkerColor(btn.dataset.felt)); els.customFelt.value = prefs.felt; }));
@@ -1182,7 +1210,7 @@ body.side-swap .tableControls{right:auto!important;left:8px!important;}
   function openDrawer(page){ els.drawer.classList.add('open'); if(page) showDrawerPage(page); }
   function closeDrawer(){ els.drawer.classList.remove('open'); document.body.classList.remove('splash-rules-open'); }
   function toggleDrawer(){ els.drawer.classList.contains('open') ? closeDrawer() : openDrawer(); }
-  function showDrawerPage(page){ els.drawerHome.classList.add('hidden'); document.querySelectorAll('.subpage').forEach(p => p.classList.toggle('active', p.id === page)); openDrawer(); renderScores(); renderLog(); }
+  function showDrawerPage(page){ els.drawerHome.classList.add('hidden'); document.querySelectorAll('.subpage').forEach(p => p.classList.toggle('active', p.id === page)); openDrawer(); renderScores(); renderLog(); if(page === 'updatePage') setTimeout(() => checkForUpdate({quiet:true}), 120); }
   function showDrawerHome(){ els.drawerHome.classList.remove('hidden'); document.querySelectorAll('.subpage').forEach(p => p.classList.remove('active')); if(document.body.classList.contains('splashing')) closeDrawer(); }
   function showSettingsTab(tab){ document.querySelectorAll('.settingsTabBtn').forEach(b => b.classList.toggle('active', b.dataset.settingsTab === tab)); $('gameplaySettings').classList.toggle('active', tab === 'gameplay'); $('appearanceSettings').classList.toggle('active', tab === 'appearance'); }
   function openModal(el){ el.classList.add('open'); }
@@ -2103,6 +2131,7 @@ body.side-swap .tableControls{right:auto!important;left:8px!important;}
     els.updateStatusText.textContent = msg;
     els.updateStatusText.classList.toggle('updateFresh', kind === 'fresh');
     els.updateStatusText.classList.toggle('updateStale', kind === 'stale');
+    els.forceLatestBtn?.classList.toggle('hidden', kind !== 'stale');
   }
   async function fetchRemoteVersion(){
     const res = await fetch(`./version.json?ts=${Date.now()}`, {cache:'no-store'});
@@ -2132,7 +2161,7 @@ body.side-swap .tableControls{right:auto!important;left:8px!important;}
       const remote = await fetchRemoteVersion();
       const current = currentVersionText();
       if(remote && remote !== current){
-        setUpdateStatus(`A newer version is published: v${remote}. Tap “Force latest version.”`, 'stale');
+        setUpdateStatus(`A newer version is published: v${remote}. Tap “Apply update.”`, 'stale');
         showUpdatePrompt(remote);
         if(!quiet && !auto) toast(`Update available: v${remote}`);
         return true;
@@ -2142,7 +2171,7 @@ body.side-swap .tableControls{right:auto!important;left:8px!important;}
       if(!quiet && !auto) toast('Golf is up to date.');
       return false;
     } catch(err){
-      if(!auto) setUpdateStatus('Could not check for updates. Try Force latest version after GitHub finishes deploying.');
+      if(!auto) setUpdateStatus('Could not check for updates. Try again after GitHub finishes deploying.');
       if(!quiet && !auto) toast('Update check failed.');
       return false;
     }
@@ -2154,7 +2183,7 @@ body.side-swap .tableControls{right:auto!important;left:8px!important;}
     }
   }
   async function forceLatestVersion(){
-    setUpdateStatus('Clearing cache and requesting latest version…');
+    setUpdateStatus('Applying update…');
     try{
       const reg = await navigator.serviceWorker?.getRegistration?.();
       if(reg?.waiting) reg.waiting.postMessage({type:'SKIP_WAITING'});
@@ -2186,7 +2215,7 @@ body.side-swap .tableControls{right:auto!important;left:8px!important;}
     navigator.serviceWorker.getRegistration?.().then(reg => {
       if(!reg) return;
       if(reg.waiting){
-        setUpdateStatus('A downloaded update is waiting. Tap “Force latest version.”', 'stale');
+        setUpdateStatus('A downloaded update is waiting. Tap “Apply update.”', 'stale');
         checkForUpdate({quiet:true, auto:true});
       }
       reg.addEventListener('updatefound', () => {
@@ -2194,7 +2223,7 @@ body.side-swap .tableControls{right:auto!important;left:8px!important;}
         if(!worker) return;
         worker.addEventListener('statechange', () => {
           if(worker.state === 'installed' && navigator.serviceWorker.controller){
-            setUpdateStatus('A new version is ready. Tap “Force latest version.”', 'stale');
+            setUpdateStatus('A new version is ready. Tap “Apply update.”', 'stale');
             checkForUpdate({quiet:true, auto:true});
           }
         });
