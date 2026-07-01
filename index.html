@@ -154,6 +154,24 @@ html,body{background:radial-gradient(circle at 50% 0%,rgba(255,255,255,.08),tran
 .seat.human{transition:filter 180ms ease!important;}
 body.layout-settling .seat.human{transition:none!important;}
 
+
+/* v22: reserve a dedicated anchored message lane above the human seat */
+.actionBanner{
+  bottom:auto!important;
+  top:var(--action-banner-top,calc(50% + 60px))!important;
+  transform:translate(-50%,0)!important;
+  max-width:calc(100% - 22px);
+  transition:top 120ms ease,opacity 120ms ease;
+}
+body.layout-settling .actionBanner{transition:none!important;}
+
+/* v22: anchored status lane + lower AI lane adjustment */
+.seat.lowerLane{transition:left 220ms ease,top 140ms ease,filter 180ms ease;}
+body.layout-settling .seat.lowerLane{transition:none!important;}
+@media (max-height:650px){
+  .actionBanner{display:flex!important;min-height:23px!important;padding:4px 8px!important;}
+}
+
 </style>
 </head>
 <body class="face-light splashing" data-cardback="classic">
@@ -203,7 +221,7 @@ body.layout-settling .seat.human{transition:none!important;}
           <button class="drawerMenuBtn" id="newGameMenuBtn" type="button">Start New Game <small>fresh course</small></button>
           <button class="drawerMenuBtn" data-page="rulesPage" type="button">Rules <small>how to play</small></button>
         </nav>
-        <div class="drawerVersionBadge"><strong id="versionLabel">v18</strong></div>
+        <div class="drawerVersionBadge"><strong id="versionLabel">v22</strong></div>
       </div>
       <section class="subpage" id="scorePage"><div class="subTop"><button class="backBtn" type="button">‹</button><div class="subTitle">Scorecard</div></div><div id="scoreList"></div></section>
       <section class="subpage" id="logPage"><div class="subTop"><button class="backBtn" type="button">‹</button><div class="subTitle">Log</div></div><div id="logEntries"></div></section>
@@ -293,7 +311,7 @@ body.layout-settling .seat.human{transition:none!important;}
 <script>
 (() => {
   'use strict';
-  const VERSION = 'v19.0.0';
+  const VERSION = 'v22.0.0';
   const SAVE_KEY = 'golf_pwa_v5_save';
   const PREF_KEY = 'golf_pwa_v5_prefs';
   const RANKS = ['A','2','3','4','5','6','7','8','9','10','J','Q','K'];
@@ -388,7 +406,7 @@ body.layout-settling .seat.human{transition:none!important;}
   function togglePref(key, el){ prefs[key] = !prefs[key]; setToggle(el, prefs[key]); savePrefs(); }
 
   function init(){
-    els.versionLabel.textContent = 'v19';
+    els.versionLabel.textContent = 'v22';
     loadPrefs(); bindEvents(); updateContinueButton(); render();
     window.addEventListener('resize', () => requestAnimationFrame(adjustBottomLayout));
     window.visualViewport?.addEventListener('resize', () => requestAnimationFrame(adjustBottomLayout));
@@ -664,7 +682,7 @@ body.layout-settling .seat.human{transition:none!important;}
         }
         return `<div class="slot miniSlot${faceDown}" data-player-id="${p.id}" data-slot="${idx}">${contents}</div>`;
       }).join('');
-      return `<div class="seat ${gridClass} ${p.human?'human':''} ${i===state.turnIndex && state.holeStarted && !state.review?'current':''} ${i===state.dealerIndex?'dealer':''} ${reviewRow?'reviewed':''} ${state.review?.tallying && state.review?.activePlayerId===p.id?'tallying':''}" data-player-id="${p.id}" style="left:${pos.left}%;top:${pos.top}%"><div class="seatName">${escapeHtml(playerName(p))}</div><div class="seatMeta"><span class="scorePill" data-score-player="${p.id}">${p.total}</span><span class="turnPill">${p.turns}/${state.cardCount}</span></div><div class="seatGrid ${gridClass}${selectable && p.human ? ' selecting' : ''}">${slots}</div>${reviewRow && !state.review?.tallying ? `<div class="holeScoreTag"><b>Hole ${reviewRow.score}</b><span>Total ${reviewRow.total}</span></div>` : ''}</div>`;
+      return `<div class="seat ${gridClass} ${p.human?'human':''} ${(!p.human && pos.top > 45)?'lowerLane':''} ${i===state.turnIndex && state.holeStarted && !state.review?'current':''} ${i===state.dealerIndex?'dealer':''} ${reviewRow?'reviewed':''} ${state.review?.tallying && state.review?.activePlayerId===p.id?'tallying':''}" data-player-id="${p.id}" style="left:${pos.left}%;top:${pos.top}%"><div class="seatName">${escapeHtml(playerName(p))}</div><div class="seatMeta"><span class="scorePill" data-score-player="${p.id}">${p.total}</span><span class="turnPill">${p.turns}/${state.cardCount}</span></div><div class="seatGrid ${gridClass}${selectable && p.human ? ' selecting' : ''}">${slots}</div>${reviewRow && !state.review?.tallying ? `<div class="holeScoreTag"><b>Hole ${reviewRow.score}</b><span>Total ${reviewRow.total}</span></div>` : ''}</div>`;
     }).join('');
     els.seatLayer.querySelectorAll('.seat.human [data-slot]').forEach(btn => btn.addEventListener('click', () => selectHumanSlot(Number(btn.dataset.slot))));
   }
@@ -677,11 +695,17 @@ body.layout-settling .seat.human{transition:none!important;}
   function adjustBottomLayout(stabilize=false){
     if(!els.table || !els.tableControls || !els.seatLayer) return;
     const humanSeat = els.seatLayer.querySelector('.seat.human');
-    if(!humanSeat || !state.active) return;
+    if(!humanSeat || !state.active){
+      positionActionBanner(stabilize);
+      return;
+    }
     const tableRect = els.table.getBoundingClientRect();
     const controlsRect = els.tableControls.getBoundingClientRect();
     const seatRect = humanSeat.getBoundingClientRect();
-    if(!tableRect.height || !controlsRect.height || !seatRect.height) return;
+    if(!tableRect.height || !controlsRect.height || !seatRect.height){
+      positionActionBanner(stabilize);
+      return;
+    }
     const gap = 4;
     const controlTop = controlsRect.top - tableRect.top;
     let topPx = controlTop - gap - (seatRect.height / 2);
@@ -689,16 +713,97 @@ body.layout-settling .seat.human{transition:none!important;}
     const maxTop = tableRect.height - (seatRect.height / 2) - gap;
     topPx = Math.max(minTop, Math.min(maxTop, topPx));
     const nextTop = `${Math.round(topPx * 100) / 100}px`;
-    if(humanSeat.style.top === nextTop) return;
+    const applyBanner = () => positionActionBanner(stabilize);
+    if(humanSeat.style.top === nextTop){
+      applyBanner();
+      return;
+    }
     if(stabilize){
       document.body.classList.add('layout-settling');
       humanSeat.style.setProperty('top', nextTop, 'important');
       // Force the final anchored position to apply before the splash transition exposes the table.
       humanSeat.offsetHeight;
+      applyBanner();
       requestAnimationFrame(() => document.body.classList.remove('layout-settling'));
     }else{
       humanSeat.style.setProperty('top', nextTop, 'important');
+      applyBanner();
     }
+  }
+
+  function adjustLowerLaneSeatsForBanner(){
+    if(!els.table || !els.actionBanner || !els.seatLayer || !state.active) return;
+    const tableRect = els.table.getBoundingClientRect();
+    const humanSeat = els.seatLayer.querySelector('.seat.human');
+    if(!tableRect.height || !humanSeat) return;
+    const humanName = humanSeat.querySelector('.seatName');
+    const humanRect = humanSeat.getBoundingClientRect();
+    const humanNameRect = humanName ? humanName.getBoundingClientRect() : humanRect;
+    const bannerRect = els.actionBanner.getBoundingClientRect();
+    const bannerHeight = bannerRect.height || 34;
+    const gap = 6;
+    const bannerTop = (humanNameRect.top - tableRect.top) - bannerHeight - gap;
+    const maxLowerBottom = bannerTop - gap;
+    if(maxLowerBottom <= 0) return;
+    els.seatLayer.querySelectorAll('.seat.lowerLane').forEach(seat => {
+      const r = seat.getBoundingClientRect();
+      const bottom = r.bottom - tableRect.top;
+      if(bottom <= maxLowerBottom) return;
+      const over = bottom - maxLowerBottom;
+      const currentCenter = r.top - tableRect.top + (r.height / 2);
+      const minCenter = tableRect.height * (state.players.length >= 5 ? 0.39 : 0.42);
+      const nextCenter = Math.max(minCenter, currentCenter - over);
+      seat.style.setProperty('top', `${Math.round(nextCenter * 100) / 100}px`, 'important');
+    });
+  }
+
+  function positionActionBanner(stabilize=false){
+    if(!els.table || !els.actionBanner) return;
+    if(!state.active){
+      els.actionBanner.style.removeProperty('--action-banner-top');
+      return;
+    }
+    adjustLowerLaneSeatsForBanner();
+    const tableRect = els.table.getBoundingClientRect();
+    const bannerRect = els.actionBanner.getBoundingClientRect();
+    const humanSeat = els.seatLayer?.querySelector('.seat.human');
+    if(!tableRect.height || !bannerRect.height || !humanSeat){
+      els.actionBanner.style.removeProperty('--action-banner-top');
+      return;
+    }
+    const humanRect = humanSeat.getBoundingClientRect();
+    const humanName = humanSeat.querySelector('.seatName');
+    const humanNameRect = humanName ? humanName.getBoundingClientRect() : humanRect;
+    const gap = 6;
+    const humanLabelTop = humanNameRect.top - tableRect.top;
+    const humanTop = humanRect.top - tableRect.top;
+    const bannerHeight = bannerRect.height || 34;
+    let lowestAbove = 44;
+    els.seatLayer.querySelectorAll('.seat:not(.human)').forEach(seat => {
+      const r = seat.getBoundingClientRect();
+      const bottom = r.bottom - tableRect.top;
+      if(bottom > 0 && bottom < humanTop - gap){ lowestAbove = Math.max(lowestAbove, bottom); }
+    });
+    const piles = els.table.querySelector('.centerPiles');
+    if(piles){
+      const r = piles.getBoundingClientRect();
+      const bottom = r.bottom - tableRect.top;
+      if(bottom > 0 && bottom < humanTop - gap){ lowestAbove = Math.max(lowestAbove, bottom); }
+    }
+    const justAboveYouPill = humanLabelTop - bannerHeight - gap;
+    const laneTop = lowestAbove + gap;
+    let topPx = justAboveYouPill;
+    if(laneTop > justAboveYouPill){
+      // If the lane is tight, favor no overlap with cards/piles over being perfectly close to the You pill.
+      topPx = laneTop;
+    }
+    const safeTop = 40;
+    const safeBottom = Math.max(safeTop, humanLabelTop - bannerHeight - 2);
+    topPx = Math.max(safeTop, Math.min(safeBottom, topPx));
+    const nextTop = `${Math.round(topPx * 100) / 100}px`;
+    if(els.actionBanner.style.getPropertyValue('--action-banner-top') === nextTop) return;
+    if(stabilize){ document.body.classList.add('layout-settling'); }
+    els.actionBanner.style.setProperty('--action-banner-top', nextTop);
   }
   function renderHumanGrid(){ renderControls(); }
   function renderControls(){
