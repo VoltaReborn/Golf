@@ -648,7 +648,7 @@ body[data-cardback="custom-image"] .backCard::after{
 
 
 
-/* v40: timeout-safe score tally animation */
+/* v41: restore next-frame helper and keep score tally timeout-safe */
 .drawerTab{top:calc(70dvh - 31px)!important;}
 /* Keep your cards large enough to play comfortably again. */
 .seat.human{--seat-card-w:clamp(50px,14vw,64px)!important;}
@@ -741,7 +741,7 @@ body.side-swap .tableControls{right:auto!important;left:8px!important;}
           <button class="drawerMenuBtn" id="newGameMenuBtn" type="button">Start New Game <small>fresh course</small></button>
           <button class="drawerMenuBtn" data-page="rulesPage" type="button">Rules <small>how to play</small></button>
         </nav>
-        <div class="drawerVersionBadge"><strong id="versionLabel">v40</strong></div>
+        <div class="drawerVersionBadge"><strong id="versionLabel">v41</strong></div>
       </div>
       <section class="subpage" id="scorePage"><div class="subTop"><button class="backBtn" type="button">‹</button><div class="subTitle">Scorecard</div></div><div id="scoreList"></div></section>
       <section class="subpage" id="logPage"><div class="subTop"><button class="backBtn" type="button">‹</button><div class="subTitle">Log</div></div><div id="logEntries"></div></section>
@@ -839,7 +839,7 @@ body.side-swap .tableControls{right:auto!important;left:8px!important;}
 <script>
 (() => {
   'use strict';
-  const VERSION = 'v40.0.0';
+  const VERSION = 'v41.0.0';
   const SAVE_KEY = 'golf_pwa_v5_save';
   const PREF_KEY = 'golf_pwa_v5_prefs';
   const RANKS = ['A','2','3','4','5','6','7','8','9','10','J','Q','K'];
@@ -864,6 +864,7 @@ body.side-swap .tableControls{right:auto!important;left:8px!important;}
   function emptyState(){ return {version:VERSION, active:false, over:false, tieBreaker:false, cardCount:4, holes:9, difficulty:'medium', players:[], dealerIndex:0, turnIndex:0, hole:1, deck:[], discard:[], drawnCard:null, pending:null, review:null, history:[], scoreHistory:[], message:'Start a new game.', holeStarted:false, startedAt:Date.now()}; }
   function clone(obj){ return JSON.parse(JSON.stringify(obj)); }
   function sleep(ms){ return new Promise(res => setTimeout(res, ms)); }
+  function nextFrame(){ return new Promise(res => requestAnimationFrame(() => res())); }
   function pace(){ return prefs.aiPace === 'slow' ? 850 : prefs.aiPace === 'fast' ? 260 : 520; }
   function shuffle(arr){ for(let i=arr.length-1;i>0;i--){ const j=Math.floor(Math.random()*(i+1)); [arr[i],arr[j]]=[arr[j],arr[i]]; } return arr; }
   function safeJsonParse(raw){ try { return raw ? JSON.parse(raw) : null; } catch { return null; } }
@@ -1014,7 +1015,7 @@ body.side-swap .tableControls{right:auto!important;left:8px!important;}
   }
 
   function init(){
-    els.versionLabel.textContent = 'v40';
+    els.versionLabel.textContent = 'v41';
     loadPrefs(); bindEvents(); updateContinueButton(); render();
     window.addEventListener('resize', () => requestAnimationFrame(adjustBottomLayout));
     window.visualViewport?.addEventListener('resize', () => requestAnimationFrame(adjustBottomLayout));
