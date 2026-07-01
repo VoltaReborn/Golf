@@ -916,7 +916,7 @@ body.side-swap .tableControls{right:auto!important;left:8px!important;}
 }
 
 
-/* v62: Next Hole ready state uses a rainbow border racer instead of flashing fill */
+/* v65: Next Hole ready state uses a rainbow border racer instead of flashing fill */
 @property --next-hole-race-angle {
   syntax: '<angle>';
   initial-value: 0deg;
@@ -943,7 +943,7 @@ body.side-swap .tableControls{right:auto!important;left:8px!important;}
 }
 
 
-/* v62: larger player name / score pill readability */
+/* v65: larger player name / score pill readability */
 .seatName{
   min-height:28px;
   max-width:170px;
@@ -968,6 +968,49 @@ body.side-swap .tableControls{right:auto!important;left:8px!important;}
   .seatName .scorePill{min-width:32px;font-size:.60rem;padding:2px 6px}
   .seat.dealer .seatName::after{width:15px;height:15px;font-size:.54rem}
 }
+
+
+
+/* v66: dealer-only edge pill nudge */
+.updateToast{
+  top:auto!important;
+  bottom:calc(12px + var(--safe-bottom))!important;
+  transform:translateX(-50%)!important;
+}
+.drawerContent{
+  display:flex!important;
+  flex-direction:column!important;
+  height:100%!important;
+  min-height:0!important;
+}
+.drawerHome:not(.hidden){
+  flex:1 1 auto!important;
+  min-height:100%!important;
+  display:flex!important;
+  flex-direction:column!important;
+}
+.drawerHome nav{flex:0 0 auto!important;}
+.drawerInlineUpdate{margin-top:auto!important;}
+.drawerFooterTools{
+  margin-top:0!important;
+  flex:0 0 auto!important;
+  padding-bottom:calc(10px + var(--safe-bottom))!important;
+}
+/* v66: keep edge player cards centered; only nudge/shrink pill when edge player is dealer */
+.seat.edgeRight{transform:translate(-50%,-50%)!important;}
+.seat.edgeLeft{transform:translate(-50%,-50%)!important;}
+.seat.edgeRight:not(.dealer) .seatName,.seat.edgeLeft:not(.dealer) .seatName{transform:none!important;max-width:150px!important;}
+.seat.edgeRight:not(.dealer) .seatNameText,.seat.edgeLeft:not(.dealer) .seatNameText{max-width:none!important;}
+.seat.edgeRight.dealer .seatName{transform:translateX(-6px)!important;max-width:132px!important;}
+.seat.edgeLeft.dealer .seatName{transform:translateX(6px)!important;max-width:132px!important;}
+.seat.edgeRight.dealer .seatNameText,.seat.edgeLeft.dealer .seatNameText{max-width:72px!important;}
+@media (max-height:740px){.seat.edgeRight.dealer .seatName,.seat.edgeLeft.dealer .seatName{max-width:122px!important}.seat.edgeRight.dealer .seatNameText,.seat.edgeLeft.dealer .seatNameText{max-width:62px!important}}
+.drawerContent{display:flex!important;flex-direction:column!important;height:100%!important;min-height:0!important;}
+.drawerHome:not(.hidden){display:flex!important;flex-direction:column!important;min-height:100%!important;height:100%!important;}
+.drawerHome nav{flex:1 1 auto!important;}
+.drawerInlineUpdate{flex:0 0 auto!important;margin-top:0!important;}
+.drawerFooterTools{flex:0 0 auto!important;margin-top:0!important;justify-content:center!important;padding-bottom:calc(10px + var(--safe-bottom))!important;}
+.drawerInlineUpdate.collapsed + .drawerFooterTools{margin-top:0!important;}
 
 </style>
 </head>
@@ -1027,12 +1070,12 @@ body.side-swap .tableControls{right:auto!important;left:8px!important;}
           <button class="drawerMenuBtn" data-page="rulesPage" type="button">Rules <small>how to play</small></button>
         </nav>
         <div class="drawerInlineUpdate collapsed" id="drawerInlineUpdate" aria-live="polite">
-          <div class="sectionBox updateMainBox"><h3>App update</h3><p id="updateStatusText">Golf v62 is running.</p>
+          <div class="sectionBox updateMainBox"><h3>App update</h3><p id="updateStatusText">Golf v66 is running.</p>
             <div class="updateBtnGrid"><button class="primaryBtn" id="checkUpdateBtn" type="button">Check for update</button><button class="primaryBtn hidden" id="forceLatestBtn" type="button">Apply update</button></div>
           </div>
         </div>
         <div class="drawerFooterTools">
-          <button class="drawerVersionBadge" id="versionPillBtn" type="button" aria-label="App update and version"><strong id="versionLabel">v62</strong><span class="versionUpdateDot" aria-hidden="true"></span></button>
+          <button class="drawerVersionBadge" id="versionPillBtn" type="button" aria-label="App update and version"><strong id="versionLabel">v66</strong><span class="versionUpdateDot" aria-hidden="true"></span></button>
         </div>
       </div>
       <section class="subpage" id="scorePage"><div class="subTop"><button class="backBtn" type="button">‹</button><div class="subTitle">Scorecard</div></div><div id="scoreList"></div></section>
@@ -1133,7 +1176,7 @@ body.side-swap .tableControls{right:auto!important;left:8px!important;}
 <script>
 (() => {
   'use strict';
-  const VERSION = 'v62.0.0';
+  const VERSION = 'v66.0.0';
   const SAVE_KEY = 'golf_pwa_v5_save';
   const PREF_KEY = 'golf_pwa_v5_prefs';
   const RANKS = ['A','2','3','4','5','6','7','8','9','10','J','Q','K'];
@@ -1318,9 +1361,9 @@ body.side-swap .tableControls{right:auto!important;left:8px!important;}
   }
 
   function init(){
-    els.versionLabel.textContent = 'v62';
+    els.versionLabel.textContent = 'v66';
     setUpdateAvailable('');
-    setUpdateStatus('Golf v62 is running.');
+    setUpdateStatus('Golf v66 is running.');
     loadPrefs(); bindEvents(); updateContinueButton(); render();
     wireServiceWorkerUpdates();
     startAutomaticUpdateChecks();
@@ -1615,7 +1658,7 @@ body.side-swap .tableControls{right:auto!important;left:8px!important;}
         }
         return `<div class="slot miniSlot${faceDown}" data-player-id="${p.id}" data-slot="${idx}">${contents}</div>`;
       }).join('');
-      return `<div class="seat ${gridClass} ${p.human?'human':''} ${(!p.human && pos.top > 45)?'lowerLane':''} ${i===state.turnIndex && state.holeStarted && !state.review?'current':''} ${i===state.dealerIndex?'dealer':''} ${reviewRow?'reviewed':''} ${state.review?.tallying && state.review?.activePlayerId===p.id?'tallying':''}" data-player-id="${p.id}" style="left:${pos.left}%;top:${pos.top}%"><div class="seatName"><span class="seatNameText">${escapeHtml(playerName(p))}</span><span class="scorePill" data-score-player="${p.id}">${p.total}</span></div><div class="seatGrid ${gridClass}${selectable && p.human ? ' selecting' : ''}">${slots}</div></div>`;
+      return `<div class="seat ${gridClass} ${p.human?'human':''} ${(!p.human && pos.top > 45)?'lowerLane':''} ${(pos.left >= 80)?'edgeRight':''} ${(pos.left <= 20)?'edgeLeft':''} ${i===state.turnIndex && state.holeStarted && !state.review?'current':''} ${i===state.dealerIndex?'dealer':''} ${reviewRow?'reviewed':''} ${state.review?.tallying && state.review?.activePlayerId===p.id?'tallying':''}" data-player-id="${p.id}" style="left:${pos.left}%;top:${pos.top}%"><div class="seatName"><span class="seatNameText">${escapeHtml(playerName(p))}</span><span class="scorePill" data-score-player="${p.id}">${p.total}</span></div><div class="seatGrid ${gridClass}${selectable && p.human ? ' selecting' : ''}">${slots}</div></div>`;
     }).join('');
     els.seatLayer.querySelectorAll('.seat.human [data-slot]').forEach(btn => btn.addEventListener('click', () => selectHumanSlot(Number(btn.dataset.slot))));
   }
@@ -2372,7 +2415,13 @@ body.side-swap .tableControls{right:auto!important;left:8px!important;}
 
 
   function normalizeVersion(v){ return String(v || '').trim().replace(/^v/i,'').split(/[+\s]/)[0]; }
+  function displayVersion(v){
+    const parts = normalizeVersion(v).split('.');
+    while(parts.length > 1 && parts[parts.length - 1] === '0') parts.pop();
+    return parts.join('.');
+  }
   function currentVersionText(){ return normalizeVersion(VERSION); }
+  function currentVersionDisplay(){ return displayVersion(VERSION); }
   function setUpdateStatus(msg, kind=''){
     if(!els.updateStatusText) return;
     els.updateStatusText.textContent = msg;
@@ -2385,8 +2434,8 @@ body.side-swap .tableControls{right:auto!important;left:8px!important;}
     updateIsAvailable = !!remote && remote !== currentVersionText();
     els.versionPillBtn?.classList.toggle('updateAvailable', updateIsAvailable);
     if(els.versionPillBtn){
-      els.versionPillBtn.setAttribute('aria-label', updateIsAvailable ? `App update available: Golf v${latestRemoteVersion}` : `Golf ${currentVersionText()}. App update`);
-      els.versionPillBtn.title = updateIsAvailable ? `Update available: v${latestRemoteVersion}` : `Golf v${currentVersionText()}`;
+      els.versionPillBtn.setAttribute('aria-label', updateIsAvailable ? `App update available: Golf v${displayVersion(latestRemoteVersion)}` : `Golf v${currentVersionDisplay()}. App update`);
+      els.versionPillBtn.title = updateIsAvailable ? `Update available: v${displayVersion(latestRemoteVersion)}` : `Golf v${currentVersionDisplay()}`;
     }
   }
   async function fetchRemoteVersion(){
@@ -2399,7 +2448,7 @@ body.side-swap .tableControls{right:auto!important;left:8px!important;}
     if(!remote || remote === currentVersionText()) return;
     if(dismissedUpdateVersion === remote) return;
     if(!els.updateToast) return;
-    els.updateToastText.textContent = `Golf v${remote} is available. Update now to get the newest version.`;
+    els.updateToastText.textContent = `Golf v${displayVersion(remote)} is available. Update now to get the newest version.`;
     els.updateToast.classList.remove('hidden');
   }
   function dismissUpdatePrompt(){
@@ -2416,13 +2465,13 @@ body.side-swap .tableControls{right:auto!important;left:8px!important;}
       const current = currentVersionText();
       if(remote && remote !== current){
         setUpdateAvailable(remote);
-        setUpdateStatus(`A newer version is published: v${remote}. Tap “Apply update.”`, 'stale');
+        setUpdateStatus(`A newer version is published: v${displayVersion(remote)}. Tap “Apply update.”`, 'stale');
         showUpdatePrompt(remote);
-        if(!quiet && !auto) toast(`Update available: v${remote}`);
+        if(!quiet && !auto) toast(`Update available: v${displayVersion(remote)}`);
         return true;
       }
       setUpdateAvailable('');
-      setUpdateStatus(`Golf v${current} is current.`, 'fresh');
+      setUpdateStatus(`Golf v${displayVersion(current)} is current.`, 'fresh');
       els.updateToast?.classList.add('hidden');
       if(!quiet && !auto) toast('Golf is up to date.');
       return false;
